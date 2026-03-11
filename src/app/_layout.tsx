@@ -2,7 +2,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from "expo-router";
 import { StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import TopBar from "../components/TopBar";
+import TopBar from "../components/TopBar/TopBar";
 import { FontFamily } from '../themes/Fonts';
 
 export default function RootLayout() {

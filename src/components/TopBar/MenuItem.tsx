@@ -1,8 +1,9 @@
 import { Colors } from "@/src/themes/Colors"
 import { FontFamily } from "@/src/themes/Fonts"
 import { StyleSheet, Text, View } from "react-native"
+import type MenuItemProps from '../../types/MenuItemProps'
 
-export default function MenuItem ({children}) {
+export default function MenuItem ({children}: MenuItemProps) {
     return (
         <View style={styles.navItemContainer}>
             <Text style={styles.navItem}>

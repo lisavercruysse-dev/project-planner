@@ -11,3 +11,4 @@ export enum Colors {
     VAR2 = "#EBCBDE",
     VAR1 = "#F8EDF3",
 }
+

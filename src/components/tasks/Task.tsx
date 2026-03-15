@@ -2,7 +2,7 @@ import { Colors } from "@/src/themes/Colors";
 import { FontFamily } from "@/src/themes/Fonts";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import TaskType from '../../types/TaskType';
 import Tag from "./Tag";
 
@@ -12,10 +12,15 @@ export type Props = {
 
 export default function Task({task}: Props) {
   const [status, setStatus] = useState(task.status)
+  
+  const handleCompleteTask = () => {
+    if (status !== "completed") setStatus("completed");
+    else setStatus("planned")
+  }
 
   return (
     <View style={[styles.taskContainer, {backgroundColor: status === "completed" ? Colors.VAR7 : Colors.VAR9}]}>
-      <View style={[{flexDirection: 'column', gap: 18}]}>
+      <View style={[{flexDirection: 'column', gap: 18, minWidth: 271}]}>
         <View style={[{flexDirection: 'column', gap: 3}]}>
           <View style={styles.taskNameProjectName}>
             <Text style={styles.taskName}>
@@ -38,11 +43,11 @@ export default function Task({task}: Props) {
         </View>
       </View>
     </View>
-      <View style={styles.checkBox}>
+      <Pressable onPressOut={handleCompleteTask} style={styles.checkBox}>
         <Text>
           {status === "completed" ? <Ionicons name="checkmark" size={24} color={Colors.VAR9} />: ""}
         </Text>
-      </View>
+      </Pressable>
   </View>
   )
 }

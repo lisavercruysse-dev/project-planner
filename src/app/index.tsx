@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { TASKS } from '../api/mockata';
 import ProgressBar from "../components/general/ProgressBar";
 import Task from '../components/tasks/Task';
@@ -19,6 +19,7 @@ export default function Index() {
   const tasks = TASKS;
 
   return (
+    <ScrollView>
       <View style={styles.container}>
         <Text style={styles.title}>Project Planner</Text>
         <View style={styles.dateQuoteContainer}>
@@ -58,6 +59,8 @@ export default function Index() {
           })}
         </View>
       </View>
+    </ScrollView>
+     
   );
 }
 

@@ -8,14 +8,15 @@ import Tag from "./Tag";
 
 export type Props = {
   task: TaskType;
+  onToggleTask: (id: number) => void;
 }
 
-export default function Task({task}: Props) {
+export default function Task({task, onToggleTask}: Props) {
   const [status, setStatus] = useState(task.status)
   
   const handleCompleteTask = () => {
-    if (status !== "completed") setStatus("completed");
-    else setStatus("planned")
+    setStatus(status === "completed" ? "planned" : "completed")
+    onToggleTask(task.id)
   }
 
   return (

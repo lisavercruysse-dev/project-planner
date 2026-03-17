@@ -1,11 +1,14 @@
-import { Colors } from "@/src/themes/Colors"
-import { StyleSheet, View } from "react-native"
+import { Colors } from "@/src/themes/Colors";
+import { StyleSheet, View } from "react-native";
 
+type Props = {
+    progress: number;
+}
 
-export default function ProgressBar() {
+export default function ProgressBar({progress}: Props) {
     return (
         <View style={styles.barContainer}>
-            <View style={styles.progress}>
+            <View style={[styles.progress, {width: `${progress}%`}]}>
 
             </View>
         </View>
@@ -18,11 +21,11 @@ const styles = StyleSheet.create({
         width: 300,
         height: 30,
         borderRadius: 30,
+        overflow: "hidden"
     },
     progress: {
         backgroundColor: Colors.VAR7,
         height: 30,
-        width: 60,
         borderRadius: 30,
     }
 })

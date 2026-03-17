@@ -1,9 +1,10 @@
 import Feather from '@expo/vector-icons/Feather';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { TASKS } from '../api/mockata';
 import ProgressBar from "../components/general/ProgressBar";
-import Task from '../components/tasks/Task';
+import TaskList from '../components/tasks/TaskList';
 import { Colors } from "../themes/Colors";
 import { FontFamily } from "../themes/Fonts";
 
@@ -16,7 +17,27 @@ export default function Index() {
     day: "numeric",
   }).split(",")
 
-  const tasks = TASKS;
+  const [tasks, setTasks] = useState(TASKS)
+
+  const completedTasksCount = tasks.filter(t => t.status === "completed").length 
+  const progress = tasks.length === 0 ? 0 : (completedTasksCount / tasks.length) * 100
+  const uncompletedTasksCount = tasks.length - completedTasksCount;
+
+  const taskProgressMessage =
+    progress === 100
+      ? "You are done for today!"
+      : `Complete ${uncompletedTasksCount} more ${uncompletedTasksCount === 1 ? "task" : "tasks"} today!`;
+
+
+  const handleTaskStatusChange = (id: number) => {
+    setTasks(prevTasks =>
+      prevTasks.map(t =>
+        t.id === id
+          ? { ...t, status: t.status === "completed" ? "planned" : "completed" }
+          : t
+      )
+    );
+  }
 
   return (
     <ScrollView>
@@ -38,9 +59,9 @@ export default function Index() {
         </View>
         <View style={styles.progressContainer}>
           <Text style={styles.progressText}>
-            Complete 6 more tasks to finish the day!
+            {taskProgressMessage}
           </Text>
-          <ProgressBar />
+          <ProgressBar progress={progress}/>
         </View>
         <View style={styles.todayTasksContainer}>
           <View style={styles.todayTasksTop}>
@@ -52,11 +73,7 @@ export default function Index() {
               <MaterialIcons name="swap-vert" size={24} color={Colors.VAR9} />
             </View>
           </View>
-          {tasks.map((t) => {
-            return (
-            <Task key={t.id} task={t}/>
-            )
-          })}
+          <TaskList tasks={TASKS} onToggleTask={handleTaskStatusChange}/>
         </View>
       </View>
     </ScrollView>

@@ -1,4 +1,4 @@
-import { Colors } from "@/src/themes/Colors";
+import { ColorsPrimary } from "@/src/themes/Colors";
 import { FontFamily } from "@/src/themes/Fonts";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from "react";
@@ -20,7 +20,7 @@ export default function Task({task, onToggleTask}: Props) {
   }
 
   return (
-    <View style={[styles.taskContainer, {backgroundColor: status === "completed" ? Colors.VAR7 : Colors.VAR9}]}>
+    <View style={[styles.taskContainer, {backgroundColor: status === "completed" ? ColorsPrimary.VAR7 : ColorsPrimary.VAR9}]}>
       <View style={[{flexDirection: 'column', gap: 18, minWidth: 271}]}>
         <View style={[{flexDirection: 'column', gap: 3}]}>
           <View style={styles.taskNameProjectName}>
@@ -28,7 +28,7 @@ export default function Task({task, onToggleTask}: Props) {
               {task.name}
             </Text>
           <Text style={styles.projectName}>
-            {task.project}
+            {task.project.name}
           </Text>
           </View>
           <Text style={styles.estimatedTime}>
@@ -46,7 +46,7 @@ export default function Task({task, onToggleTask}: Props) {
     </View>
       <Pressable onPressOut={handleCompleteTask} style={styles.checkBox}>
         <Text>
-          {status === "completed" ? <Ionicons name="checkmark" size={24} color={Colors.VAR9} />: ""}
+          {status === "completed" ? <Ionicons name="checkmark" size={24} color={ColorsPrimary.VAR9} />: ""}
         </Text>
       </Pressable>
   </View>
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   taskName: {
     fontFamily: FontFamily.BOLD,
     fontSize: 15,
-    color: Colors.VAR1
+    color: ColorsPrimary.VAR1
   },
   taskContainer: {
     padding: 10,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   projectName: {
-    color: Colors.VAR1 + '75',
+    color: ColorsPrimary.VAR1 + '75',
     fontFamily: FontFamily.SEMIBOLD,
     fontSize: 12,
   },
@@ -83,11 +83,11 @@ const styles = StyleSheet.create({
   },
   estimatedTime: {
     fontFamily: FontFamily.MEDIUM,
-    color: Colors.VAR1 + '75',
+    color: ColorsPrimary.VAR1 + '75',
     fontSize: 12
   },
   checkBox: {
-    backgroundColor: Colors.VAR1,
+    backgroundColor: ColorsPrimary.VAR1,
     width: 50,
     height: 50,
     borderRadius: 25,

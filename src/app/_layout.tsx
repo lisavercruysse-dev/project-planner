@@ -5,7 +5,7 @@ import { Tabs } from "expo-router";
 import { StyleSheet, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar/TopBar";
-import { Colors } from '../themes/Colors';
+import { ColorsPrimary } from '../themes/Colors';
 import { FontFamily } from '../themes/Fonts';
 
 export default function RootLayout() {
@@ -24,7 +24,7 @@ export default function RootLayout() {
       <SafeAreaView style={styles.container}>
         <TopBar />
         <View style={{ flex: 1 }}>
-          <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: Colors.VAR7, animation: "none" }} >
+          <Tabs screenOptions={{ headerShown: false, tabBarActiveTintColor: ColorsPrimary.VAR7, animation: "none" }} >
             <Tabs.Screen name='index' options={{
               tabBarIcon: ({color, size}) => <FontAwesome5 name="home" size={size} color={color} />,
               tabBarShowLabel: false,

@@ -1,12 +1,19 @@
 import Feather from '@expo/vector-icons/Feather';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { TASKS } from '../api/mockata';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { PROJECTS, TAGS, TASKS } from '../api/mockata';
 import ProgressBar from "../components/general/ProgressBar";
+import FilterTasksModal from '../components/modals/FilterTasksModal';
 import TaskList from '../components/tasks/TaskList';
-import { Colors } from "../themes/Colors";
+import { ColorsPrimary } from "../themes/Colors";
 import { FontFamily } from "../themes/Fonts";
+import Project from '../types/ProjectType';
+import Tag from '../types/TagType';
+
+export type SelectedFilter =
+  | { type: "tag"; value: string }
+  | { type: "project"; value: number };
 
 export default function Index() {
 
@@ -18,6 +25,11 @@ export default function Index() {
   }).split(",")
 
   const [tasks, setTasks] = useState(TASKS)
+  const [modalVisible, setModalVisible] = useState(false);
+  const [filteredTasks, setFilteredTasks] = useState(tasks)
+
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
+  const [selectedProjects, setSelectedProjects] = useState<Project[]>([])
 
   const completedTasksCount = tasks.filter(t => t.status === "completed").length 
   const progress = tasks.length === 0 ? 0 : (completedTasksCount / tasks.length) * 100
@@ -38,6 +50,24 @@ export default function Index() {
       )
     );
   }
+
+  const handleConfirm = (tags: Tag[], projects: Project[]) => {
+    setSelectedTags(tags)
+    setSelectedProjects(projects)
+    setModalVisible(false);
+
+    if(tags.length === 0 && projects.length === 0){
+      setFilteredTasks(tasks)
+    } else {
+      const tagFilter = tags.map((t) => t.name.toLowerCase())
+
+      setFilteredTasks(tasks.filter((t) => {
+        const tagMatch = tagFilter.length === 0 || t.tags.some((tag) => tagFilter.includes(tag.name.toLowerCase()));
+        const projectMatch = projects.length === 0 || projects.some(p => p.id === t.project.id);
+        return tagMatch && projectMatch;
+      }));
+    }
+};
 
   return (
     <ScrollView>
@@ -68,14 +98,30 @@ export default function Index() {
             <Text style={styles.tasksTitle}>
               {`Today's Tasks`}
             </Text>
-            <View style={styles.iconContainer}>
-              <Feather name="filter" size={24} color={Colors.VAR9} />
-              <MaterialIcons name="swap-vert" size={24} color={Colors.VAR9} />
+            <View style={styles.filterAndSortContainer}>
+              <Pressable onPress={() => setModalVisible(!modalVisible)} style={styles.iconContainer}>
+                <Feather name="filter" size={24} color={ColorsPrimary.VAR9} />
+              </Pressable>
+              <Pressable>
+                <MaterialIcons name="swap-vert" size={24} color={ColorsPrimary.VAR9} />
+              </Pressable>
             </View>
           </View>
-          <TaskList tasks={TASKS} onToggleTask={handleTaskStatusChange}/>
+          <TaskList tasks={filteredTasks} onToggleTask={handleTaskStatusChange}/>
         </View>
       </View>
+      <Modal 
+      visible={modalVisible}
+      onRequestClose={() => setModalVisible(!modalVisible)}
+      animationType='fade'
+      transparent={true}
+      >
+        <Pressable style={styles.modalView} onPress={() => setModalVisible(!modalVisible)} >
+          <Pressable style={styles.test} onPress={() => {}}>
+            <FilterTasksModal tags={TAGS} projects={PROJECTS} onConfirm={handleConfirm} initialSelectedTags={selectedTags} initialSelectedProjects={selectedProjects}/>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </ScrollView>
      
   );
@@ -90,7 +136,7 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   title: {
-    color: Colors.VAR9,
+    color: ColorsPrimary.VAR9,
     fontFamily: FontFamily.BOLD,
     fontSize: 40,
   },
@@ -98,14 +144,14 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     borderRadius: 150,
-    borderColor: Colors.VAR9,
+    borderColor: ColorsPrimary.VAR9,
     borderWidth: 1,
-    backgroundColor: Colors.VAR1,
+    backgroundColor: ColorsPrimary.VAR1,
   },
 
   //Quote and date
   dateContainer: {
-    backgroundColor: Colors.VAR9,
+    backgroundColor: ColorsPrimary.VAR9,
     borderRadius: 50,
     width: 100,
     height: 100,
@@ -118,16 +164,16 @@ const styles = StyleSheet.create({
     padding: 20
   },
   date: {
-    color: Colors.VAR1,
+    color: ColorsPrimary.VAR1,
     fontFamily: FontFamily.MEDIUM,
     fontSize: 20,
     textAlign: "center",
     maxWidth: 70
   },
   quoteContainer: {
-    borderTopColor: Colors.VAR9 + 20,
+    borderTopColor: ColorsPrimary.VAR9 + 20,
     borderTopWidth: 1,
-    borderBottomColor: Colors.VAR9 + 20,
+    borderBottomColor: ColorsPrimary.VAR9 + 20,
     borderBottomWidth: 1,
     width: 270,
     height: 80,
@@ -139,7 +185,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.BOLD,
     paddingLeft: 27,
     fontSize: 13,
-    color: Colors.VAR9
+    color: ColorsPrimary.VAR9
   },
 
   //Progressbar
@@ -147,7 +193,7 @@ const styles = StyleSheet.create({
     padding: 25
   },
   progressText: {
-    color: Colors.VAR9,
+    color: ColorsPrimary.VAR9,
     fontSize: 12,
     fontFamily: FontFamily.LIGHT,
     textAlign: "center",
@@ -173,7 +219,29 @@ const styles = StyleSheet.create({
   tasksTitle: {
     fontFamily: FontFamily.BOLD,
     fontSize: 18,
-    color: Colors.VAR9,
+    color: ColorsPrimary.VAR9,
     paddingHorizontal: 10
   },
+
+  //Filtering and Sorting
+  filterAndSortContainer: {
+    flexDirection: "row",
+    gap: 15,
+    paddingHorizontal: 15
+  },
+  modalView: {
+    backgroundColor: '#000000' + 50,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+  },
+  test: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 15,
+    alignSelf: "center",
+    width: '100%',
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0
+  }
 })

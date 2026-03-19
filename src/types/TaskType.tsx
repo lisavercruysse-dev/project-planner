@@ -1,9 +1,10 @@
 import Tag from '../types/TagType';
+import Project from './ProjectType';
 
 type Task = {
   id: number;
   name: string;
-  project: string;
+  project: Project;
   estimatedTime: number;
   tags: Tag[];
   status: string;

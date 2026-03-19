@@ -1,10 +1,10 @@
-import TaskType from "@/src/types/TaskType";
 import { StyleSheet, View } from "react-native";
+import TaskType from '../../types/TaskType';
 import Task from "./Task";
 
 type Props = {
-  tasks: TaskType[];
-  onToggleTask: (id: number) => void;
+  tasks: TaskType[]
+  onToggleTask: (id: number) => void
 }
 
 export default function TaskList({tasks, onToggleTask}: Props) {

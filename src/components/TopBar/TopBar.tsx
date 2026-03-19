@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import { Colors } from '../../themes/Colors';
+import { ColorsPrimary } from '../../themes/Colors';
 import { FontFamily } from '../../themes/Fonts';
 
 export default function TopBar () {
@@ -11,7 +11,7 @@ export default function TopBar () {
         <View>
             <View style={styles.outerContainer}>
                 <Pressable onPressOut={handleSettings}>
-                    <Feather name="settings" size={24} color={Colors.VAR9} />
+                    <Feather name="settings" size={24} color={ColorsPrimary.VAR9} />
                 </Pressable>
                 <Text style={styles.mainText}>Project Planner</Text>  
             </View>
@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     },
 
     mainText: {
-        color: Colors.VAR9,
+        color: ColorsPrimary.VAR9,
         fontSize: 20,
         fontFamily: FontFamily.BOLD,
         position: "absolute",

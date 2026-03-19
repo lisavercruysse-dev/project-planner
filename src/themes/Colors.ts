@@ -1,4 +1,4 @@
-export enum Colors {
+export enum ColorsPrimary {
     VAR11 = "#12070E",
     VAR10 = "#341426",
     VAR9 = "#55203F",
@@ -12,3 +12,17 @@ export enum Colors {
     VAR1 = "#F8EDF3",
 }
 
+export enum ColorsSecondary {
+    VAR11 = '#071212',
+    VAR10 = '#143432',
+    VAR9 = '#215451',
+    VAR8 = '#2E7671',
+    VAR7 = '#3B9790',
+    VAR6 = '#47B8B0',
+    VAR5 = '#68C4BE',
+    VAR4 = '#89D1CD',
+    VAR3 = '#ABDEDB',
+    VAR2 = '#CCEBE9',
+    VAR1 = '#EDF8F7',
+
+}

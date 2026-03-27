@@ -15,24 +15,36 @@ type Props = {
   initialSelectedProjects?: Project[],
 }
 
-export default function FilterTasksModal ({  tags,
+export default function FilterTasksModal ({  
+  tags,
   projects,
   onConfirm,
   initialSelectedTags = [],
   initialSelectedProjects = [],
 }: Props) {
+
   const [text, onChangeText] = useState('')
   const [selectedTags, setSelectedTags] = useState<Tag[]>(initialSelectedTags)
   const [selectedProjects, setSelectedProjects] = useState<Project[]>(initialSelectedProjects)
 
-  const handleTagSelect = (tag: Tag , isSelected: boolean) => {
-    if (isSelected) setSelectedTags((prevList) => [...prevList, tag])
-    else setSelectedTags((prevList) => prevList.filter(t => t.id !== tag.id))
+  function updateSelection<F extends { id: string | number }>(
+  prevList: F[],
+  item: F,
+  isSelected: boolean
+  ): F[] {
+    if (isSelected) {
+      return [...prevList, item]
+    } else {
+      return prevList.filter(i => i.id !== item.id)
+    }
+  }
+
+  const handleTagSelect = (tag: Tag, isSelected: boolean) => {
+    setSelectedTags(prev => updateSelection(prev, tag, isSelected))
   }
 
   const handleProjectSelect = (project: Project, isSelected: boolean) => {
-    if (isSelected) setSelectedProjects((prevList) => [...prevList, project])
-    else setSelectedProjects((prevList) => prevList.filter(t => t.id !== project.id))
+    setSelectedProjects(prev => updateSelection(prev, project, isSelected))
   }
 
   const filteredTags = useMemo(() => {
@@ -41,6 +53,12 @@ export default function FilterTasksModal ({  tags,
     })
   }, [tags, text]
 )
+
+  const handleCancel = () => {
+    setSelectedTags([])
+    setSelectedProjects([])
+    onConfirm([], [])
+  }
 
   return (
     <View style={styles.container}>
@@ -85,11 +103,18 @@ export default function FilterTasksModal ({  tags,
           })}  
         </View>
       </View>
-      <Pressable style={styles.confirmButton} onPress={() => onConfirm(selectedTags, selectedProjects)}>
-        <Text style={styles.confirmButton}>
-          Confirm
-        </Text>
-      </Pressable>
+      <View style={styles.buttonContainer}>
+        <Pressable style={styles.removeButton} onPress={handleCancel}>
+          <Text style={styles.removeButtonText}>
+            Remove filters  
+          </Text>    
+        </Pressable>
+        <Pressable style={styles.confirmButton} onPress={() => onConfirm(selectedTags, selectedProjects)}>
+          <Text style={styles.confirmButton}>
+            Confirm
+          </Text>
+        </Pressable>
+      </View>
     </View>
   )
 }
@@ -144,6 +169,24 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     borderRadius: 15,
     fontFamily: FontFamily.BOLD,
-    
+  },
+  removeButton: {
+    backgroundColor: ColorsPrimary.VAR2,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    alignSelf: "center",
+    borderRadius: 15,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    gap: 5,
+  },
+  removeButtonText: {
+    color: ColorsPrimary.VAR9,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    alignSelf: "center",
+    borderRadius: 15,
+    fontFamily: FontFamily.BOLD,
   }
 })

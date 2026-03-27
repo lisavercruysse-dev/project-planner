@@ -1,21 +1,19 @@
-import Feather from '@expo/vector-icons/Feather';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import { PROJECTS, TAGS, TASKS } from '../api/mockata';
+import { useState } from "react";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { TASKS } from '../api/mockata';
 import ProgressBar from "../components/general/ProgressBar";
-import FilterTasksModal from '../components/modals/FilterTasksModal';
-import TaskList from '../components/tasks/TaskList';
+import TaskList from "../components/tasks/TaskList";
 import { ColorsPrimary } from "../themes/Colors";
 import { FontFamily } from "../themes/Fonts";
-import Project from '../types/ProjectType';
-import Tag from '../types/TagType';
+import Task from "../types/TaskType";
 
 export type SelectedFilter =
   | { type: "tag"; value: string }
   | { type: "project"; value: number };
 
 export default function Index() {
+
+  const [tasks, setTasks] = useState(TASKS)
 
   const today: Date = new Date()
   const formattedDate = today.toLocaleDateString("en-GB", {
@@ -24,50 +22,13 @@ export default function Index() {
     day: "numeric",
   }).split(",")
 
-  const [tasks, setTasks] = useState(TASKS)
-  const [modalVisible, setModalVisible] = useState(false);
-  const [filteredTasks, setFilteredTasks] = useState(tasks)
-
-  const [selectedTags, setSelectedTags] = useState<Tag[]>([])
-  const [selectedProjects, setSelectedProjects] = useState<Project[]>([])
-
-  const completedTasksCount = tasks.filter(t => t.status === "completed").length 
-  const progress = tasks.length === 0 ? 0 : (completedTasksCount / tasks.length) * 100
-  const uncompletedTasksCount = tasks.length - completedTasksCount;
-
-  const taskProgressMessage =
-    progress === 100
-      ? "You are done for today!"
-      : `Complete ${uncompletedTasksCount} more ${uncompletedTasksCount === 1 ? "task" : "tasks"} today!`;
-
-
-  const handleTaskStatusChange = (id: number) => {
-    setTasks(prevTasks =>
-      prevTasks.map(t =>
-        t.id === id
-          ? { ...t, status: t.status === "completed" ? "planned" : "completed" }
-          : t
+  const handleToggleTask = (task: Task) => {
+    setTasks(prevList =>
+      prevList.map(t =>
+        t.id === task.id ? {...t, status: t.status === "completed" ? "planned" : "completed"}: t
       )
-    );
+    )
   }
-
-  const handleConfirm = (tags: Tag[], projects: Project[]) => {
-    setSelectedTags(tags)
-    setSelectedProjects(projects)
-    setModalVisible(false);
-
-    if(tags.length === 0 && projects.length === 0){
-      setFilteredTasks(tasks)
-    } else {
-      const tagFilter = tags.map((t) => t.name.toLowerCase())
-
-      setFilteredTasks(tasks.filter((t) => {
-        const tagMatch = tagFilter.length === 0 || t.tags.some((tag) => tagFilter.includes(tag.name.toLowerCase()));
-        const projectMatch = projects.length === 0 || projects.some(p => p.id === t.project.id);
-        return tagMatch && projectMatch;
-      }));
-    }
-};
 
   return (
     <ScrollView>
@@ -85,43 +46,10 @@ export default function Index() {
             </Text>
           </View>
         </View>
-        <View style={styles.centerImage}>
-        </View>
-        <View style={styles.progressContainer}>
-          <Text style={styles.progressText}>
-            {taskProgressMessage}
-          </Text>
-          <ProgressBar progress={progress}/>
-        </View>
-        <View style={styles.todayTasksContainer}>
-          <View style={styles.todayTasksTop}>
-            <Text style={styles.tasksTitle}>
-              {`Today's Tasks`}
-            </Text>
-            <View style={styles.filterAndSortContainer}>
-              <Pressable onPress={() => setModalVisible(!modalVisible)} style={styles.iconContainer}>
-                <Feather name="filter" size={24} color={ColorsPrimary.VAR9} />
-              </Pressable>
-              <Pressable>
-                <MaterialIcons name="swap-vert" size={24} color={ColorsPrimary.VAR9} />
-              </Pressable>
-            </View>
-          </View>
-          <TaskList tasks={filteredTasks} onToggleTask={handleTaskStatusChange}/>
-        </View>
+        <View style={styles.centerImage}/>
+          <ProgressBar tasks={tasks}/>
+        <TaskList tasks={tasks} onToggleTask={handleToggleTask}/>   
       </View>
-      <Modal 
-      visible={modalVisible}
-      onRequestClose={() => setModalVisible(!modalVisible)}
-      animationType='fade'
-      transparent={true}
-      >
-        <Pressable style={styles.modalView} onPress={() => setModalVisible(!modalVisible)} >
-          <Pressable style={styles.test} onPress={() => {}}>
-            <FilterTasksModal tags={TAGS} projects={PROJECTS} onConfirm={handleConfirm} initialSelectedTags={selectedTags} initialSelectedProjects={selectedProjects}/>
-          </Pressable>
-        </Pressable>
-      </Modal>
     </ScrollView>
      
   );
@@ -188,60 +116,4 @@ const styles = StyleSheet.create({
     color: ColorsPrimary.VAR9
   },
 
-  //Progressbar
-  progressContainer: {
-    padding: 25
-  },
-  progressText: {
-    color: ColorsPrimary.VAR9,
-    fontSize: 12,
-    fontFamily: FontFamily.LIGHT,
-    textAlign: "center",
-    padding: 5
-  },
-
-  //Today's Tasks
-  todayTasksTop: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: "center",
-    width: "100%",
-  },
-  todayTasksContainer: {
-    flexDirection: 'column',
-    gap: 5,
-    padding: 5
-  },
-  iconContainer: {
-    flexDirection: 'row',
-    gap: 10
-  },
-  tasksTitle: {
-    fontFamily: FontFamily.BOLD,
-    fontSize: 18,
-    color: ColorsPrimary.VAR9,
-    paddingHorizontal: 10
-  },
-
-  //Filtering and Sorting
-  filterAndSortContainer: {
-    flexDirection: "row",
-    gap: 15,
-    paddingHorizontal: 15
-  },
-  modalView: {
-    backgroundColor: '#000000' + 50,
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'flex-end',
-  },
-  test: {
-    backgroundColor: "white",
-    padding: 20,
-    borderRadius: 15,
-    alignSelf: "center",
-    width: '100%',
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0
-  }
 })

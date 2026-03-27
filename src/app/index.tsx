@@ -46,9 +46,11 @@ export default function Index() {
             </Text>
           </View>
         </View>
-        <View style={styles.centerImage}/>
-          <ProgressBar tasks={tasks}/>
-        <TaskList tasks={tasks} onToggleTask={handleToggleTask}/>   
+          <View style={styles.centerImage}/>
+          <View style={styles.progressBar}>
+            <ProgressBar tasks={tasks}/>
+          </View>
+          <TaskList tasks={tasks} onToggleTask={handleToggleTask}/> 
       </View>
     </ScrollView>
      
@@ -75,6 +77,10 @@ const styles = StyleSheet.create({
     borderColor: ColorsPrimary.VAR9,
     borderWidth: 1,
     backgroundColor: ColorsPrimary.VAR1,
+  },
+  progressBar: {
+    marginTop: 15,
+    marginBottom: 35
   },
 
   //Quote and date

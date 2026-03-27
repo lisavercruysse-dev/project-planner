@@ -9,6 +9,7 @@ type Task = {
   tags: Tag[];
   status: string;
   date: Date;
+  timeSpent: number;
 }
 
 export default Task;

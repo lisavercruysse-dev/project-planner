@@ -1,26 +1,19 @@
 import { ColorsPrimary } from "@/src/themes/Colors";
 import { FontFamily } from "@/src/themes/Fonts";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import TaskType from '../../types/TaskType';
 import Tag from "./Tag";
 
 export type Props = {
   task: TaskType;
-  onToggleTask: (id: number) => void;
+  onToggleTask: () => void;
 }
 
 export default function Task({task, onToggleTask}: Props) {
-  const [status, setStatus] = useState(task.status)
-  
-  const handleCompleteTask = () => {
-    setStatus(status === "completed" ? "planned" : "completed")
-    onToggleTask(task.id)
-  }
 
   return (
-    <View style={[styles.taskContainer, {backgroundColor: status === "completed" ? ColorsPrimary.VAR7 : ColorsPrimary.VAR9}]}>
+    <View style={[styles.taskContainer, {backgroundColor: task.status === "completed" ? ColorsPrimary.VAR7 : ColorsPrimary.VAR9}]}>
       <View style={[{flexDirection: 'column', gap: 18, minWidth: 271}]}>
         <View style={[{flexDirection: 'column', gap: 3}]}>
           <View style={styles.taskNameProjectName}>
@@ -44,9 +37,9 @@ export default function Task({task, onToggleTask}: Props) {
         </View>
       </View>
     </View>
-      <Pressable onPressOut={handleCompleteTask} style={styles.checkBox}>
+      <Pressable onPress={() => onToggleTask()} style={styles.checkBox}>
         <Text>
-          {status === "completed" ? <Ionicons name="checkmark" size={24} color={ColorsPrimary.VAR9} />: ""}
+          {task.status === "completed" ? <Ionicons name="checkmark" size={24} color={ColorsPrimary.VAR9} />: ""}
         </Text>
       </Pressable>
   </View>

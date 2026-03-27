@@ -31,7 +31,7 @@ export default function Index() {
   }
 
   return (
-    <ScrollView>
+    <ScrollView keyboardShouldPersistTaps="handled">
       <View style={styles.container}>
         <Text style={styles.title}>Project Planner</Text>
         <View style={styles.dateQuoteContainer}>

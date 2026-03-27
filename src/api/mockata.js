@@ -25,6 +25,7 @@ const TASKS = [
     ],
     status: "completed",
     date: new Date(),
+    timeSpent: 60,
   },
   {
     id: 2,
@@ -37,6 +38,7 @@ const TASKS = [
     ],
     status: "planned",
     date: new Date(),
+    timeSpent: 0,
   },
   {
     id: 3,
@@ -49,6 +51,7 @@ const TASKS = [
     ],
     status: "planned",
     date: new Date(),
+    timeSpent: 0,
   },
   {
     id: 4,
@@ -60,6 +63,7 @@ const TASKS = [
     ],
     status: "planned",
     date: new Date(),
+    timeSpent: 0,
   },
   {
     id: 5,
@@ -72,7 +76,9 @@ const TASKS = [
     ],
     status: "planned",
     date: new Date("2026-03-15"),
+    timeSpent: 0,
   },
 ];
 
 export { PROJECTS, TAGS, TASKS };
+

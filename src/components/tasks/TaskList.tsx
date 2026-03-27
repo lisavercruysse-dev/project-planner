@@ -10,6 +10,7 @@ import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import TaskType from '../../types/TaskType';
 import FilterTasksModal from "../modals/FilterTasksModal";
 import SortTasksModal from "../modals/SortTasksModal";
+import ToggleTaskModal from "../modals/ToggleTaskModal";
 import Task from "./Task";
 
 type Props = {
@@ -21,12 +22,16 @@ export default function TaskList({tasks, onToggleTask}: Props) {
 
   const [filterModalVisible, setFilterModalVisible] = useState(false);
   const [sortModalVisible, setSortModalVisible] = useState(false);
+  const [toggleTaskModalVisible, setToggleTaskModalVisible] = useState(false);
   
   const [filteredTasks, setFilteredTasks] = useState(tasks);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([])
   const [selectedProjects, setSelectedProjects] = useState<Project[]>([])
 
+  const [currentTask, setCurrentTask] = useState<TaskType | null>(null)
+
   const handleFilterConfirm = (tags: Tag[], projects: Project[]) => {
+
       setSelectedTags(tags)
       setSelectedProjects(projects)
       setFilterModalVisible(false);
@@ -62,6 +67,28 @@ export default function TaskList({tasks, onToggleTask}: Props) {
     setFilteredTasks(sortedTasks)
   }
 
+  const handleToggleTask = (task: TaskType) => {
+    setCurrentTask(task);
+    setToggleTaskModalVisible(true)
+  }
+
+  const handleToggleConfirm = (value: string) => {
+    if (currentTask) {
+      const updatedTask: TaskType = {
+        ...currentTask,
+        timeSpent: parseInt(value) || 0,
+        status: currentTask.status === "completed" ? "planned" : "completed",
+      };
+
+      setFilteredTasks(prev => prev.map(t => (t.id === updatedTask.id ? updatedTask : t)));
+
+      onToggleTask(updatedTask);
+
+      setToggleTaskModalVisible(false)
+      setCurrentTask(null)
+    }
+  }
+
   return (
     <View>
       <View style={styles.todayTasksContainer}>
@@ -82,7 +109,7 @@ export default function TaskList({tasks, onToggleTask}: Props) {
           {
             filteredTasks.map((t) => {
               return (
-                <Task key={t.id} task={t} onToggleTask={() => onToggleTask(t)}/>
+                <Task key={t.id} task={t} onToggleTask={() => handleToggleTask(t)}/>
               )
             })
           }
@@ -109,6 +136,18 @@ export default function TaskList({tasks, onToggleTask}: Props) {
         <Pressable style={styles.modalView} onPress={() => setSortModalVisible(!sortModalVisible)} >
           <Pressable style={styles.test} onPress={() => {}}>
             <SortTasksModal onConfirm={handleSortConfirm}/>
+          </Pressable>
+        </Pressable>
+      </Modal>
+      <Modal
+      visible={toggleTaskModalVisible}
+      onRequestClose={() => setToggleTaskModalVisible(!toggleTaskModalVisible)}
+      animationType="fade"
+      transparent={true}
+      >
+        <Pressable style={styles.modalView} onPress={() => setToggleTaskModalVisible(!toggleTaskModalVisible)}>
+          <Pressable style={styles.test} onPress={() => {}}>
+            <ToggleTaskModal onConfirm={handleToggleConfirm} onCancel={() => setToggleTaskModalVisible(false)} task={currentTask}/>
           </Pressable>
         </Pressable>
       </Modal>

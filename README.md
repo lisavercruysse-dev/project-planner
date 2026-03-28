@@ -1,50 +1,24 @@
-# Welcome to your Expo app 👋
+# Project Planner
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile project planner application built to learn React Native (using Expo).
 
-## Get started
+## Why I built this
 
-1. Install dependencies
+I already had some experience with React and wanted to learn how to build mobile applications as well. That's why I chose to build this project with React Native.
 
-   ```bash
-   npm install
-   ```
+Besides that, I have always had a lot of ideas for projects, but I rarely followed through on them. That's why I wanted to build an application that helps me structure and organize my ideas.
 
-2. Start the app
+I'm a very visual person and work best when I can break large ideas into smaller, more manageable parts. That's what I focused on with this app.
 
-   ```bash
-   npx expo start
-   ```
+The core of the planner is the ability to break a project down into features, and then break those features down into smaller tasks. Each task can also contain subtasks as deep as needed. On top of that, I added a space to quickly write down thoughts so nothing gets lost.
 
-In the output, you'll find options to open the app in a
+## Instructions
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+To start up the project:  
+```
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Features
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+* Quickly manage daily tasks

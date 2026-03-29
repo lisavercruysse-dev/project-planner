@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
 
     mainText: {
         color: ColorsPrimary.VAR9,
-        fontSize: 20,
+        fontSize: 15,
         fontFamily: FontFamily.BOLD,
         position: "absolute",
         left: 0,

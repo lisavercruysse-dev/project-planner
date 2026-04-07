@@ -1,90 +1,77 @@
-import { ColorsPrimary } from "@/src/themes/Colors";
-import { FontFamily } from "@/src/themes/Fonts";
-import Ionicons from '@expo/vector-icons/Ionicons';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import TaskType from '../../types/TaskType';
-import Tag from "./Tag";
+import { ColorsPrimary } from "../../themes/Colors";
+import { FontFamily } from "../../themes/Fonts";
+import { TaskType } from "../../types/TaskType";
 
-export type Props = {
-  task: TaskType;
-  onToggleTask: () => void;
+type Props = {
+  task: TaskType
 }
 
-export default function Task({task, onToggleTask}: Props) {
-
+export default function Task ({task}: Props) {
   return (
-    <View style={[styles.taskContainer, {backgroundColor: task.status === "completed" ? ColorsPrimary.VAR7 : ColorsPrimary.VAR9}]}>
-      <View style={[{flexDirection: 'column', gap: 18, minWidth: 271}]}>
-        <View style={[{flexDirection: 'column', gap: 3}]}>
-          <View style={styles.taskNameProjectName}>
-            <Text style={styles.taskName}>
-              {task.name}
-            </Text>
-          <Text style={styles.projectName}>
-            {task.project.name}
-          </Text>
-          </View>
-          <Text style={styles.estimatedTime}>
-            Estimated time: {task.estimatedTime} minutes
+    <View style={styles.taskContainer} key={task.id}>
+      <View>
+        <Text style={styles.mainText}>
+          {task.name}
+        </Text>
+        <Text style={styles.secondaryText}>
+          estimated time: {task.estimatedTime}
         </Text>
       </View>
-
-      <View>
-        <View style={styles.tagContainer}>
-          {task.tags.map((t) => 
-            t ? <Tag key={t.id} tag={t}/> : null
-          )}
-        </View>
+      <View style={styles.buttonContainer}>
+        <Pressable style={styles.button}>
+          <Text style={styles.buttonText}>
+            View
+          </Text>
+        </Pressable>
+        <Pressable>
+          <AntDesign name="caret-up" size={24} color={ColorsPrimary.VAR9} />
+        </Pressable>
       </View>
     </View>
-      <Pressable onPress={() => onToggleTask()} style={styles.checkBox}>
-        <Text>
-          {task.status === "completed" ? <Ionicons name="checkmark" size={24} color={ColorsPrimary.VAR9} />: ""}
-        </Text>
-      </Pressable>
-  </View>
   )
 }
 
 const styles = StyleSheet.create({
-  tagContainer: {
-    flexDirection: "row",
-    gap: 5,
-  },
-  taskName: {
-    fontFamily: FontFamily.BOLD,
-    fontSize: 15,
-    color: ColorsPrimary.VAR1
-  },
   taskContainer: {
-    padding: 10,
+    flexDirection: 'row',
+    width: "100%",
+    justifyContent: "space-between",
+    padding: 20,
+    borderColor: ColorsPrimary.VAR9 + 10,
+    borderBottomWidth: 1
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center"
+  },
+  button: {
+    backgroundColor: ColorsPrimary.VAR9,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    justifyContent: "center",
     borderRadius: 15,
-    gap: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
   },
-  projectName: {
-    color: ColorsPrimary.VAR1 + '75',
+  buttonText: {
+    color: ColorsPrimary.VAR1,
+    fontFamily: FontFamily.BOLD,
+  },
+  mainText: {
+    fontSize: 15,
     fontFamily: FontFamily.SEMIBOLD,
+    color: ColorsPrimary.VAR9
+  },
+  secondaryText: {
     fontSize: 12,
+    fontFamily: FontFamily.REGULAR,
+    color: ColorsPrimary.VAR9
   },
-  taskNameProjectName: {
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
-  },
-  estimatedTime: {
-    fontFamily: FontFamily.MEDIUM,
-    color: ColorsPrimary.VAR1 + '75',
-    fontSize: 12
-  },
-  checkBox: {
-    backgroundColor: ColorsPrimary.VAR1,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center'
+  title: {
+    fontFamily: FontFamily.BOLD,
+    fontSize: 20,
+    color: ColorsPrimary.VAR9,
+    paddingHorizontal: 15
   }
 })

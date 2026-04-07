@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { TASKS } from '../api/mockata';
+import { getAllTasks } from "../api/index";
 import ProgressBar from "../components/general/ProgressBar";
-import TaskList from "../components/tasks/TaskList";
+import Tasklist from "../components/tasks/Tasklist";
 import { ColorsPrimary } from "../themes/Colors";
 import { FontFamily } from "../themes/Fonts";
-import Task from "../types/TaskType";
+import { TaskType } from "../types/TaskType";
 
 export type SelectedFilter =
   | { type: "tag"; value: string }
@@ -13,7 +13,16 @@ export type SelectedFilter =
 
 export default function Index() {
 
-  const [tasks, setTasks] = useState(TASKS)
+  const [tasks, setTasks] = useState<TaskType[]>([])
+
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const dbTasks = await getAllTasks();
+      setTasks(dbTasks);
+    };
+    fetchTasks();
+  }, []);
+
 
   const today: Date = new Date()
   const formattedDate = today.toLocaleDateString("en-GB", {
@@ -21,14 +30,6 @@ export default function Index() {
     month: "short",
     day: "numeric",
   }).split(",")
-
-  const handleToggleTask = (task: Task) => {
-    setTasks(prevList =>
-      prevList.map(t =>
-        t.id === task.id ? {...t, status: t.status === "completed" ? "planned" : "completed"}: t
-      )
-    )
-  }
 
   return (
     <ScrollView keyboardShouldPersistTaps="handled">
@@ -50,7 +51,7 @@ export default function Index() {
           <View style={styles.progressBar}>
             <ProgressBar tasks={tasks}/>
           </View>
-          <TaskList tasks={tasks} onToggleTask={handleToggleTask}/> 
+          <Tasklist tasks={tasks}/>
       </View>
     </ScrollView>
      

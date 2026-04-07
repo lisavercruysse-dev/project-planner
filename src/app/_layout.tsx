@@ -79,7 +79,6 @@ export default function RootLayout() {
             }}/>
           </Tabs>
         </View>
-
       </SafeAreaView>
     </SafeAreaProvider>
   );

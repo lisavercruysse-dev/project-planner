@@ -1,8 +1,10 @@
+import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { getAllTasks } from "../api/index";
 import ProgressBar from "../components/general/ProgressBar";
 import Tasklist from "../components/tasks/Tasklist";
+import { auth } from "../config/FirebaseConfig";
 import { ColorsPrimary } from "../themes/Colors";
 import { FontFamily } from "../themes/Fonts";
 import { TaskType } from "../types/TaskType";
@@ -13,15 +15,29 @@ export type SelectedFilter =
 
 export default function Index() {
 
-  const [tasks, setTasks] = useState<TaskType[]>([])
+  const [tasks, setTasks] = useState<TaskType[]>([]);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    signInAnonymously(auth).catch(console.error);
+
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setReady(true); 
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    if (!ready) return;
     const fetchTasks = async () => {
       const dbTasks = await getAllTasks();
       setTasks(dbTasks);
     };
     fetchTasks();
-  }, []);
+  }, [ready]);
 
 
   const today: Date = new Date()

@@ -36,18 +36,18 @@ export default function Task ({task}: Props) {
           </Pressable>
         </View>
       </View>
-      <Modal
-        visible={detailsVisible}
-        onRequestClose={() => setDetailsVisible(!detailsVisible)}
-        animationType='fade'
-        transparent={true}
-      >
-        <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.modalBackground}>
-          <Pressable style={styles.modal}>
-            <TaskDetailModal task={task}/>
+        <Modal
+          visible={detailsVisible}
+          onRequestClose={() => setDetailsVisible(!detailsVisible)}
+          animationType='fade'
+          transparent={true}
+        >
+          <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.modalBackground}>
+            <Pressable style={styles.modal}>
+              <TaskDetailModal task={task}/>
+            </Pressable>
           </Pressable>
-        </Pressable>
-      </Modal>
+        </Modal>
     </View>
 
   )

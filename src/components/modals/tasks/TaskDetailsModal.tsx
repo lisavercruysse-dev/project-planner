@@ -5,6 +5,7 @@ import { TaskType } from '@/src/types/TaskType';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import AsyncData from '../../asyncData/AsyncData';
 
 
 type Props = {
@@ -20,65 +21,66 @@ type TaskDetailsType = {
 
 export default function TaskDetailModal({task}: Props) {
   const [taskDetails, setTaskDetails] = useState<TaskDetailsType | null>(null);
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    let isMounted = true;
-    async function fetchTaskDetails() {
-      const details = await getTaskDetails(task.id);
-      if (isMounted) setTaskDetails(details)
+    const fetchTaskDetails = async () => {
+        setLoading(true);
+        const details = await getTaskDetails(task.id);
+        setTaskDetails(details);
+        setLoading(false);
     }
-
-    fetchTaskDetails();
-    return () => {isMounted = false}
+    fetchTaskDetails()
   }, [task.id])
 
   return (
-      <View style={styles.container}>
+        <AsyncData loading={loading}>
+          <View style={styles.container}>
+            <View style={styles.titleContainer}>
+              <FontAwesome name="search" size={20} color={ColorsPrimary.VAR9} />
+              <Text style={styles.title}>
+                Details
+              </Text>
+            </View>
 
-        <View style={styles.titleContainer}>
-          <FontAwesome name="search" size={20} color={ColorsPrimary.VAR9} />
-          <Text style={styles.title}>
-            Details
-          </Text>
-        </View>
+              <View style={styles.midSectionContainer}>
+                <Text style={styles.taskName}>
+                  {task.name}
+                </Text>
+                <Text style={styles.description}>
+                  {task.description}
+                </Text>
+              </View>
 
-          <View style={styles.midSectionContainer}>
-            <Text style={styles.taskName}>
-              {task.name}
-            </Text>
-            <Text style={styles.description}>
-              {task.description}
-            </Text>
-          </View>
+              <View style={styles.midSectionContainer}>
+                <Text style={styles.details}>
+                  Project: {taskDetails?.project
+                  .name}
+                </Text>
+                <Text style={styles.details}>
+                  Feature: {taskDetails?.feature.name}
+                </Text>
+                <Text style={styles.details}>
+                  Parent task: {taskDetails?.parent ? taskDetails.parent.name : "/"}
+                </Text>
+              </View>
 
-          <View style={styles.midSectionContainer}>
-            <Text style={styles.details}>
-              Project: {taskDetails?.project
-              .name}
-            </Text>
-            <Text style={styles.details}>
-              Feature: {taskDetails?.feature.name}
-            </Text>
-            <Text style={styles.details}>
-              Parent task: {taskDetails?.parent ? taskDetails.parent.name : "/"}
-            </Text>
-          </View>
+              <View style={styles.midSectionContainer}>
+                <Text style={styles.details}>
+                  Estimated time: {task.estimatedTime}
+                </Text>
+                <Text style={styles.details}>
+                  Spent time: {task.timeSpent}
+                </Text>
+              </View>
 
-          <View style={styles.midSectionContainer}>
-            <Text style={styles.details}>
-              Estimated time: {task.estimatedTime}
-            </Text>
-            <Text style={styles.details}>
-              Spent time: {task.timeSpent}
-            </Text>
-          </View>
-
-          <Pressable style={styles.completeButton}>
-            <Text style={styles.completeButtonText}>
-              Mark as completed
-            </Text>
-          </Pressable>
-      </View>
+              <Pressable style={styles.completeButton}>
+                <Text style={styles.completeButtonText}>
+                  Mark as completed
+                </Text>
+              </Pressable>
+            </View>
+        </AsyncData>
   )
 }
 

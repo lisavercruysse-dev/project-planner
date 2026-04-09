@@ -1,35 +1,55 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useState } from 'react';
+import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { ColorsPrimary } from "../../themes/Colors";
 import { FontFamily } from "../../themes/Fonts";
 import { TaskType } from "../../types/TaskType";
+import TaskDetailModal from '../modals/tasks/TaskDetailsModal';
 
 type Props = {
   task: TaskType
 }
 
 export default function Task ({task}: Props) {
+
+  const [detailsVisible, setDetailsVisible] = useState(false)
+
   return (
-    <View style={styles.taskContainer} key={task.id}>
-      <View>
-        <Text style={styles.mainText}>
-          {task.name}
-        </Text>
-        <Text style={styles.secondaryText}>
-          estimated time: {task.estimatedTime}
-        </Text>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>
-            View
+    <View>
+      <View style={styles.taskContainer} key={task.id}>
+        <View>
+          <Text style={styles.mainText}>
+            {task.name}
           </Text>
-        </Pressable>
-        <Pressable>
-          <AntDesign name="caret-up" size={24} color={ColorsPrimary.VAR9} />
-        </Pressable>
+          <Text style={styles.secondaryText}>
+            estimated time: {task.estimatedTime}
+          </Text>
+        </View>
+        <View style={styles.buttonContainer}>
+          <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.button}>
+            <Text style={styles.buttonText}>
+              View
+            </Text>
+          </Pressable>
+          <Pressable>
+            <AntDesign name="caret-down" size={24} color={ColorsPrimary.VAR9} />
+          </Pressable>
+        </View>
       </View>
+      <Modal
+        visible={detailsVisible}
+        onRequestClose={() => setDetailsVisible(!detailsVisible)}
+        animationType='fade'
+        transparent={true}
+      >
+        <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.modalBackground}>
+          <Pressable style={styles.modal}>
+            <TaskDetailModal task={task}/>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
+
   )
 }
 
@@ -73,5 +93,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: ColorsPrimary.VAR9,
     paddingHorizontal: 15
+  },
+
+  //Modal
+  modalBackground: {
+    backgroundColor: '#000000' + 50,
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+  },
+  modal: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 15,
+    alignSelf: "center",
+    width: '100%',
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0
   }
 })

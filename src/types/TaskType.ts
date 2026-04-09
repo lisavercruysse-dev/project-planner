@@ -5,4 +5,5 @@ export type TaskType = {
   estimatedTime: number;
   date: Date;
   timeSpent: number;
+  description: string;
 };

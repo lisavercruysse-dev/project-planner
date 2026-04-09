@@ -1,9 +1,10 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useState } from 'react';
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ColorsPrimary } from "../../themes/Colors";
 import { FontFamily } from "../../themes/Fonts";
 import { TaskType } from "../../types/TaskType";
+
 import TaskDetailModal from '../modals/tasks/TaskDetailsModal';
 
 type Props = {
@@ -43,8 +44,13 @@ export default function Task ({task}: Props) {
           transparent={true}
         >
           <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.modalBackground}>
-            <Pressable style={styles.modal}>
-              <TaskDetailModal task={task}/>
+            <Pressable 
+            onPress={() => {}}
+            style={styles.modal}
+            >
+              <ScrollView>
+                <TaskDetailModal task={task}/>
+              </ScrollView>
             </Pressable>
           </Pressable>
         </Modal>
@@ -106,7 +112,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     padding: 20,
     borderRadius: 15,
-    alignSelf: "center",
+    alignSelf: "stretch",
     width: '100%',
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0

@@ -18,7 +18,6 @@ export default function Index() {
 
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const [loading, setLoading] = useState(false)
-  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setLoading(true);

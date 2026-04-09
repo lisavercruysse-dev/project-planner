@@ -88,7 +88,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'column',
     gap: 30,
-    padding: 10
+    padding: 10,
+    flex: 1,
   },
 
   midSectionContainer: {

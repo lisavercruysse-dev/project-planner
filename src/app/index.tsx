@@ -1,10 +1,10 @@
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { getAllTasks } from "../api/index";
+import { getTopLevelTasks } from "../api/index";
 import AsyncData from "../components/asyncData/AsyncData";
 import ProgressBar from "../components/general/ProgressBar";
-import Tasklist from "../components/tasks/Tasklist";
+import Tasklist from "../components/tasks/TaskList";
 import { auth } from "../config/FirebaseConfig";
 import { ColorsPrimary } from "../themes/Colors";
 import { FontFamily } from "../themes/Fonts";
@@ -28,7 +28,7 @@ export default function Index() {
       if (!user) return;
 
       try {
-        const dbTasks = await getAllTasks();
+        const dbTasks = await getTopLevelTasks();
         setTasks(dbTasks);
       } finally {
         setLoading(false);

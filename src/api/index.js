@@ -1,22 +1,56 @@
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, limit, query, where } from "firebase/firestore";
 import { db } from "../config/FirebaseConfig";
 
-export const getAllTasks = async () => {
-  const snapshot = await getDocs(collection(db, "tasks"));
-  return snapshot.docs.map((doc) => {
-    const data = doc.data();
-    console.log(`${doc.id} => ${JSON.stringify(data)}`); 
-    return {
-      id: doc.id,
-      name: data.name ?? "",
-      status: data.status ?? "planned",
-      estimatedTime: data.estimatedTime ?? 0,
-      date: data.plannedDate?.toDate?.() ?? new Date(),
-      timeSpent: data.spentTime ?? 0,
-      description: data.description ?? null,
-    };
-  });
+  export const getTopLevelTasks = async () => {
+    const tasksCollection = collection(db, 'tasks');
+    const q = query(tasksCollection, where('parent', '==', null));
+    const snapshot = await getDocs(q);
+
+    const tasks = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        name: data.name,
+        status: data.status,
+        estimatedTime: data.estimatedTime || 0,
+        date: data.plannedDate?.toDate?.() || new Date(),
+        timeSpent: data.spentTime || 0,
+        description: data.description || "",
+        parent: null,
+      };
+    });
+    return tasks;
+  };
+
+  export const hasChildren = async (taskId) => {
+    const taskCollection = collection(db, "tasks");
+    const q = query(taskCollection, where("parent", "==", doc(db, "tasks", taskId)), limit(1));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty; 
 };
+
+  export const getChildTasks = async (taskId) => {
+    const parentRef = doc(db, 'tasks', taskId)
+    const taskCollection = collection(db, 'tasks');
+    const q = query(taskCollection, where('parent', '==', parentRef));
+    const snapshot = await getDocs(q);
+
+    const tasks = snapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        name: data.name,
+        status: data.status,
+        estimatedTime: data.estimatedTime || 0,
+        date: data.plannedDate?.toDate?.() || new Date(),
+        timeSpent: data.spentTime || 0,
+        description: data.description || "",
+        parent: null,
+        children: [],
+      };
+    });
+    return tasks;
+  }
 
   export const getTaskDetails = async (taskId) => {
     //task
@@ -37,7 +71,6 @@ export const getAllTasks = async () => {
     if (taskData.parent) {
       parentData = await getLinkedData(taskData.parent);
     }
-
 
     return {
       task: taskData,

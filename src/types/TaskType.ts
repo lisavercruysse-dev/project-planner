@@ -6,4 +6,5 @@ export type TaskType = {
   date: Date;
   timeSpent: number;
   description: string;
+  parent: TaskType | null;
 };

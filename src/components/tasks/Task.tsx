@@ -1,61 +1,75 @@
+import { getChildTasks, hasChildren } from '@/src/api';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ColorsPrimary } from "../../themes/Colors";
 import { FontFamily } from "../../themes/Fonts";
 import { TaskType } from "../../types/TaskType";
-
 import TaskDetailModal from '../modals/tasks/TaskDetailsModal';
 
 type Props = {
-  task: TaskType
+  task: TaskType;
+  level?: number;
 }
 
-export default function Task ({task}: Props) {
+export default function Task ({ task, level =  0}: Props) {
 
-  const [detailsVisible, setDetailsVisible] = useState(false)
+  const [detailsVisible, setDetailsVisible] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const [children, setChildren] = useState<TaskType[]>([]);
+  const [hasKids, setHasKids] = useState(false)
+
+  useEffect(() => {
+    hasChildren(task.id).then(setHasKids);
+  }, [task.id])
+
+  const handleExpandTask = async () => {
+    if (!expanded) {
+      const childTasks = await getChildTasks(task.id);
+      setChildren(childTasks);
+    }
+    setExpanded(!expanded);
+  }
 
   return (
-    <View>
+    <View style={{ marginLeft: level * 15 }}>
       <View style={styles.taskContainer} key={task.id}>
         <View>
-          <Text style={styles.mainText}>
-            {task.name}
-          </Text>
+          <Text style={styles.mainText}>{task.name}</Text>
           <Text style={styles.secondaryText}>
             estimated time: {task.estimatedTime}
           </Text>
         </View>
         <View style={styles.buttonContainer}>
           <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.button}>
-            <Text style={styles.buttonText}>
-              View
-            </Text>
+            <Text style={styles.buttonText}>View</Text>
           </Pressable>
-          <Pressable>
-            <AntDesign name="caret-down" size={24} color={ColorsPrimary.VAR9} />
-          </Pressable>
+            <Pressable disabled={!hasKids} onPress={handleExpandTask}>
+              <AntDesign name={expanded ? "caret-up" : "caret-down"} size={24} color={hasKids ? ColorsPrimary.VAR9 : "grey"} />
+            </Pressable>
         </View>
       </View>
-        <Modal
-          visible={detailsVisible}
-          onRequestClose={() => setDetailsVisible(!detailsVisible)}
-          animationType='fade'
-          transparent={true}
-        >
-          <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.modalBackground}>
-            <Pressable 
-            onPress={() => {}}
-            style={styles.modal}
-            >
-              <ScrollView>
-                <TaskDetailModal task={task}/>
-              </ScrollView>
-            </Pressable>
-          </Pressable>
-        </Modal>
-    </View>
 
+      {expanded && children.map(child => (
+        <Task key={child.id} task={child} level={level +1}/>
+      ))}
+
+      {/* Modal */}
+      <Modal
+        visible={detailsVisible}
+        onRequestClose={() => setDetailsVisible(!detailsVisible)}
+        animationType='fade'
+        transparent={true}
+      >
+        <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.modalBackground}>
+          <Pressable onPress={() => {}} style={styles.modal}>
+            <ScrollView>
+              <TaskDetailModal task={task}/>
+            </ScrollView>
+          </Pressable>
+        </Pressable>
+      </Modal>
+    </View>
   )
 }
 
@@ -94,27 +108,18 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.REGULAR,
     color: ColorsPrimary.VAR9
   },
-  title: {
-    fontFamily: FontFamily.BOLD,
-    fontSize: 20,
-    color: ColorsPrimary.VAR9,
-    paddingHorizontal: 15
-  },
-
-  //Modal
+  // Modal
   modalBackground: {
-    backgroundColor: '#000000' + 50,
+    backgroundColor: '#00000050',
     flex: 1,
-    flexDirection: 'column',
     justifyContent: 'flex-end',
   },
   modal: {
     backgroundColor: "white",
     padding: 20,
     borderRadius: 15,
-    alignSelf: "stretch",
     width: '100%',
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0
   }
-})
+});

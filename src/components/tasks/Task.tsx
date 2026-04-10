@@ -1,11 +1,12 @@
 import { getChildTasks, hasChildren } from '@/src/api';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ColorsPrimary } from "../../themes/Colors";
 import { FontFamily } from "../../themes/Fonts";
 import { TaskType } from "../../types/TaskType";
 import TaskDetailModal from '../modals/tasks/TaskDetailsModal';
+
 
 type Props = {
   task: TaskType;
@@ -15,6 +16,7 @@ type Props = {
 export default function Task ({ task, level =  0}: Props) {
 
   const [detailsVisible, setDetailsVisible] = useState(false);
+  const [taskData, setTaskData] = useState<TaskType>(task);  
   const [expanded, setExpanded] = useState(false);
   const [children, setChildren] = useState<TaskType[]>([]);
   const [hasKids, setHasKids] = useState(false)
@@ -31,6 +33,10 @@ export default function Task ({ task, level =  0}: Props) {
     setExpanded(!expanded);
   }
 
+  const handleFetch = useCallback((taskDetails: TaskType | undefined) => {
+    if (taskDetails) setTaskData(taskDetails);
+  }, []);
+    
   return (
     <View style={{ marginLeft: level * 15 }}>
       <View style={styles.taskContainer} key={task.id}>
@@ -41,7 +47,13 @@ export default function Task ({ task, level =  0}: Props) {
           </Text>
         </View>
         <View style={styles.buttonContainer}>
-          <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.button}>
+          <Pressable
+            onPress={() => setDetailsVisible(!detailsVisible)}
+            style={[
+              styles.button,
+              { backgroundColor: taskData.status === "completed" ? "#215520" : ColorsPrimary.VAR9 }
+            ]}
+          >
             <Text style={styles.buttonText}>View</Text>
           </Pressable>
             <Pressable disabled={!hasKids} onPress={handleExpandTask}>
@@ -54,20 +66,25 @@ export default function Task ({ task, level =  0}: Props) {
         <Task key={child.id} task={child} level={level +1}/>
       ))}
 
-      {/* Modal */}
       <Modal
         visible={detailsVisible}
         onRequestClose={() => setDetailsVisible(!detailsVisible)}
         animationType='fade'
         transparent={true}
       >
-        <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.modalBackground}>
-          <Pressable onPress={() => {}} style={styles.modal}>
-            <ScrollView>
-              <TaskDetailModal task={task}/>
-            </ScrollView>
+        <ScrollView
+          scrollEnabled={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <Pressable onPress={() => setDetailsVisible(false)} style={styles.modalBackground}>
+            <View style={styles.modal}>  
+              <ScrollView keyboardShouldPersistTaps="handled">
+                <TaskDetailModal task={taskData} onFetch={handleFetch}/>
+              </ScrollView>
+            </View>
           </Pressable>
-        </Pressable>
+        </ScrollView>
       </Modal>
     </View>
   )
@@ -88,7 +105,6 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   button: {
-    backgroundColor: ColorsPrimary.VAR9,
     paddingHorizontal: 8,
     paddingVertical: 3,
     justifyContent: "center",
@@ -108,6 +124,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.REGULAR,
     color: ColorsPrimary.VAR9
   },
+  
   // Modal
   modalBackground: {
     backgroundColor: '#00000050',

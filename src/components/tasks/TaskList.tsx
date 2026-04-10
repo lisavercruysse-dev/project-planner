@@ -6,14 +6,14 @@ type Props = {
   tasks: TaskType[]
 }
 
-export default function TaskList({tasks}: Props) {
+export default function TaskList({ tasks }: Props) {
+  const rootTasks = tasks.filter(t => t.parent == null);
+
   return (
     <View>
-      {tasks?.map((t: TaskType) => {
-        return (
-          <Task key={t.id} task={t}/>
-        )
-      })}
+      {rootTasks.map(t => (
+        <Task key={t.id} task={t} />
+      ))}
     </View>
   )
 }

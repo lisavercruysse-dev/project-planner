@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
+import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { TASKS } from '../api/mockata';
+import { getTodaysTasks } from "../api/index";
+import AsyncData from "../components/asyncData/AsyncData";
 import ProgressBar from "../components/general/ProgressBar";
-import TaskList from "../components/tasks/TaskList";
+import Tasklist from "../components/tasks/TaskList";
+import { auth } from "../config/FirebaseConfig";
 import { ColorsPrimary } from "../themes/Colors";
 import { FontFamily } from "../themes/Fonts";
-import Task from "../types/TaskType";
+import { TaskType } from "../types/TaskType";
 
 export type SelectedFilter =
   | { type: "tag"; value: string }
@@ -13,7 +16,28 @@ export type SelectedFilter =
 
 export default function Index() {
 
-  const [tasks, setTasks] = useState(TASKS)
+  const [tasks, setTasks] = useState<TaskType[]>([]);
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    setLoading(true);
+
+    signInAnonymously(auth).catch(console.error);
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) return;
+
+      try {
+        const dbTasks = await getTodaysTasks();
+        setTasks(dbTasks);
+      } finally {
+        setLoading(false);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
 
   const today: Date = new Date()
   const formattedDate = today.toLocaleDateString("en-GB", {
@@ -22,16 +46,11 @@ export default function Index() {
     day: "numeric",
   }).split(",")
 
-  const handleToggleTask = (task: Task) => {
-    setTasks(prevList =>
-      prevList.map(t =>
-        t.id === task.id ? {...t, status: t.status === "completed" ? "planned" : "completed"}: t
-      )
-    )
-  }
-
   return (
-    <ScrollView keyboardShouldPersistTaps="handled">
+    <ScrollView 
+    keyboardShouldPersistTaps="handled"
+    contentContainerStyle={{ flexGrow: 1, backgroundColor: "#FFFF" }}
+    >
       <View style={styles.container}>
         <Text style={styles.title}>Project Planner</Text>
         <View style={styles.dateQuoteContainer}>
@@ -50,7 +69,10 @@ export default function Index() {
           <View style={styles.progressBar}>
             <ProgressBar tasks={tasks}/>
           </View>
-          <TaskList tasks={tasks} onToggleTask={handleToggleTask}/> 
+          <Text style={styles.todayTasks}>{`Today's Tasks`}</Text>
+          <AsyncData loading={loading}>
+            <Tasklist tasks={tasks}/>
+          </AsyncData>
       </View>
     </ScrollView>
      
@@ -121,5 +143,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: ColorsPrimary.VAR9
   },
+  todayTasks: {
+    fontFamily: FontFamily.BOLD,
+    fontSize: 20,
+    color: ColorsPrimary.VAR9,
+    paddingHorizontal: 15,
+    alignSelf: "flex-start"
+  }
 
 })

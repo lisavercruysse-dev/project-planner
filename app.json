@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "project-planner",
-    "slug": "project-planner",
+    "slug": "projectplanner",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -40,12 +40,25 @@
         }
       ],
       [
-        "expo-font"   
+        "expo-font"
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "APIKEY": "AIzaSyDAjBm0oiWHEOPSZNzZs2OPqQNp4hmR8AU",
+      "AUTHDOMAIN": "project-planner-lisa.firebaseapp.com",
+      "PROJECTID": "project-planner-lisa",
+      "STORAGEBUCKET": "project-planner-lisa.firebasestorage.app",
+      "MESSAGINGSENDERID": "197964480827",
+      "APPID": "1:197964480827:web:fe57819fed6ffd5929b71e",
+      "router": {},
+      "eas": {
+        "projectId": "7793c840-a941-433f-96d0-09ad21569d0a"
+      }
+    },
+    "owner": "lisa.vercruysse"
   }
 }

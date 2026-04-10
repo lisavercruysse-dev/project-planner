@@ -1,90 +1,142 @@
-import { ColorsPrimary } from "@/src/themes/Colors";
-import { FontFamily } from "@/src/themes/Fonts";
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { Pressable, StyleSheet, Text, View } from "react-native";
-import TaskType from '../../types/TaskType';
-import Tag from "./Tag";
+import { getChildTasks, hasChildren } from '@/src/api';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { useCallback, useEffect, useState } from 'react';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ColorsPrimary } from "../../themes/Colors";
+import { FontFamily } from "../../themes/Fonts";
+import { TaskType } from "../../types/TaskType";
+import TaskDetailModal from '../modals/tasks/TaskDetailsModal';
 
-export type Props = {
+
+type Props = {
   task: TaskType;
-  onToggleTask: () => void;
+  level?: number;
 }
 
-export default function Task({task, onToggleTask}: Props) {
+export default function Task ({ task, level =  0}: Props) {
 
+  const [detailsVisible, setDetailsVisible] = useState(false);
+  const [taskData, setTaskData] = useState<TaskType>(task);  
+  const [expanded, setExpanded] = useState(false);
+  const [children, setChildren] = useState<TaskType[]>([]);
+  const [hasKids, setHasKids] = useState(false)
+
+  useEffect(() => {
+    hasChildren(task.id).then(setHasKids);
+  }, [task.id])
+
+  const handleExpandTask = async () => {
+    if (!expanded) {
+      const childTasks = await getChildTasks(task.id);
+      setChildren(childTasks);
+    }
+    setExpanded(!expanded);
+  }
+
+  const handleFetch = useCallback((taskDetails: TaskType | undefined) => {
+    if (taskDetails) setTaskData(taskDetails);
+  }, []);
+    
   return (
-    <View style={[styles.taskContainer, {backgroundColor: task.status === "completed" ? ColorsPrimary.VAR7 : ColorsPrimary.VAR9}]}>
-      <View style={[{flexDirection: 'column', gap: 18, minWidth: 271}]}>
-        <View style={[{flexDirection: 'column', gap: 3}]}>
-          <View style={styles.taskNameProjectName}>
-            <Text style={styles.taskName}>
-              {task.name}
-            </Text>
-          <Text style={styles.projectName}>
-            {task.project.name}
+    <View style={{ marginLeft: level * 15 }}>
+      <View style={styles.taskContainer} key={task.id}>
+        <View>
+          <Text style={styles.mainText}>{task.name}</Text>
+          <Text style={styles.secondaryText}>
+            estimated time: {task.estimatedTime}
           </Text>
-          </View>
-          <Text style={styles.estimatedTime}>
-            Estimated time: {task.estimatedTime} minutes
-        </Text>
-      </View>
-
-      <View>
-        <View style={styles.tagContainer}>
-          {task.tags.map((t) => 
-            t ? <Tag key={t.id} tag={t}/> : null
-          )}
+        </View>
+        <View style={styles.buttonContainer}>
+          <Pressable
+            onPress={() => setDetailsVisible(!detailsVisible)}
+            style={[
+              styles.button,
+              { backgroundColor: taskData.status === "completed" ? "#215520" : ColorsPrimary.VAR9 }
+            ]}
+          >
+            <Text style={styles.buttonText}>View</Text>
+          </Pressable>
+            <Pressable disabled={!hasKids} onPress={handleExpandTask}>
+              <AntDesign name={expanded ? "caret-up" : "caret-down"} size={24} color={hasKids ? ColorsPrimary.VAR9 : "grey"} />
+            </Pressable>
         </View>
       </View>
+
+      {expanded && children.map(child => (
+        <Task key={child.id} task={child} level={level +1}/>
+      ))}
+
+      <Modal
+        visible={detailsVisible}
+        onRequestClose={() => setDetailsVisible(!detailsVisible)}
+        animationType='fade'
+        transparent={true}
+      >
+        <ScrollView
+          scrollEnabled={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <Pressable onPress={() => setDetailsVisible(false)} style={styles.modalBackground}>
+            <View style={styles.modal}>  
+              <ScrollView keyboardShouldPersistTaps="handled">
+                <TaskDetailModal task={taskData} onFetch={handleFetch}/>
+              </ScrollView>
+            </View>
+          </Pressable>
+        </ScrollView>
+      </Modal>
     </View>
-      <Pressable onPress={() => onToggleTask()} style={styles.checkBox}>
-        <Text>
-          {task.status === "completed" ? <Ionicons name="checkmark" size={24} color={ColorsPrimary.VAR9} />: ""}
-        </Text>
-      </Pressable>
-  </View>
   )
 }
 
 const styles = StyleSheet.create({
-  tagContainer: {
-    flexDirection: "row",
-    gap: 5,
-  },
-  taskName: {
-    fontFamily: FontFamily.BOLD,
-    fontSize: 15,
-    color: ColorsPrimary.VAR1
-  },
   taskContainer: {
-    padding: 10,
+    flexDirection: 'row',
+    width: "100%",
+    justifyContent: "space-between",
+    padding: 20,
+    borderColor: ColorsPrimary.VAR9 + 10,
+    borderBottomWidth: 1
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center"
+  },
+  button: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    justifyContent: "center",
     borderRadius: 15,
-    gap: 10,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
   },
-  projectName: {
-    color: ColorsPrimary.VAR1 + '75',
+  buttonText: {
+    color: ColorsPrimary.VAR1,
+    fontFamily: FontFamily.BOLD,
+  },
+  mainText: {
+    fontSize: 15,
     fontFamily: FontFamily.SEMIBOLD,
+    color: ColorsPrimary.VAR9
+  },
+  secondaryText: {
     fontSize: 12,
+    fontFamily: FontFamily.REGULAR,
+    color: ColorsPrimary.VAR9
   },
-  taskNameProjectName: {
-    flexDirection: 'row',
-    gap: 10,
-    alignItems: 'center',
+  
+  // Modal
+  modalBackground: {
+    backgroundColor: '#00000050',
+    flex: 1,
+    justifyContent: 'flex-end',
   },
-  estimatedTime: {
-    fontFamily: FontFamily.MEDIUM,
-    color: ColorsPrimary.VAR1 + '75',
-    fontSize: 12
-  },
-  checkBox: {
-    backgroundColor: ColorsPrimary.VAR1,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    alignItems: 'center',
-    justifyContent: 'center'
+  modal: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 15,
+    width: '100%',
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0
   }
-})
+});

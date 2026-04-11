@@ -1,13 +1,10 @@
+import { useTasks } from "@/src/context/TaskContext";
 import { ColorsPrimary } from "@/src/themes/Colors";
 import { FontFamily } from "@/src/themes/Fonts";
-import Task from "@/src/types/TaskType";
 import { StyleSheet, Text, View } from "react-native";
 
-type Props = {
-    tasks: Task[];
-}
-
-export default function ProgressBar({tasks}: Props) {
+export default function ProgressBar() {
+    const { tasks } = useTasks();
 
     const completedTasksCount = tasks.filter(t => t.status === "completed").length 
     const progress = tasks.length === 0 ? 0 : (completedTasksCount / tasks.length) * 100

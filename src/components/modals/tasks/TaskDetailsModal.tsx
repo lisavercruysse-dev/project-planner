@@ -1,4 +1,5 @@
 import { getTaskDetails, updateTask } from '@/src/api';
+import { useTasks } from '@/src/context/TaskContext';
 import { ColorsPrimary } from '@/src/themes/Colors';
 import { FontFamily } from '@/src/themes/Fonts';
 import { TaskType } from '@/src/types/TaskType';
@@ -14,7 +15,6 @@ import AddSpentTimeModal from './AddSpentTimeModal';
 
 type Props = {
   task: TaskType;
-  onFetch: (details: TaskType | undefined) => void;
 }
 
 type TaskDetailsType = {
@@ -24,7 +24,9 @@ type TaskDetailsType = {
   parent: any;
 }
 
-export default function TaskDetailModal({task, onFetch}: Props) {
+export default function TaskDetailModal({task}: Props) {
+  const {dispatch} = useTasks();
+
   const [taskDetails, setTaskDetails] = useState<TaskDetailsType | null>(null);
   const [loading, setLoading] = useState(false);
   const [addTimeVisible, setAddTimeVisible] = useState(false);
@@ -35,11 +37,10 @@ export default function TaskDetailModal({task, onFetch}: Props) {
     try {
       const details = await getTaskDetails(task.id);
       setTaskDetails(details);
-      onFetch(details?.task)
     } finally {
       setLoading(false);
     }
-  }, [onFetch, task.id]);
+  }, [task.id]);
 
   useEffect(() => {
     fetchTaskDetails()
@@ -51,11 +52,10 @@ export default function TaskDetailModal({task, onFetch}: Props) {
   }
 
   const markIncomplete = async () => {
-    await updateTask(task.id, {
-      spentTime: Number(taskDetails?.task.timeSpent) || 0,
-      status: "planned"
-    });
-    await fetchTaskDetails();
+    const changes = {spentTime: Number(taskDetails?.task.timeSpent) || 0, status: "planned"};
+    await updateTask(task.id, changes);
+    dispatch({type: "UPDATE_TASK", id: task.id, changes});
+    setTaskDetails(prev => prev ? {...prev, task: {...prev.task, ...changes}} : prev)
   }
 
   return (

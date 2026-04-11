@@ -1,4 +1,5 @@
 import { updateTask } from "@/src/api"
+import { useTasks } from "@/src/context/TaskContext"
 import { ColorsPrimary } from "@/src/themes/Colors"
 import { FontFamily } from "@/src/themes/Fonts"
 import { TaskType } from "@/src/types/TaskType"
@@ -12,7 +13,8 @@ type Props = {
 }
 
 export default function AddSpentTimeModal ({task, onClose, calledFunction}: Props) {
-  const [minutes, onChangeMinutes] = useState('')
+  const [minutes, onChangeMinutes] = useState('');
+  const {dispatch} = useTasks();
 
   const update = async (time: number) => {
     let newStatus: string = task.status;
@@ -23,16 +25,20 @@ export default function AddSpentTimeModal ({task, onClose, calledFunction}: Prop
       newStatus = "in progress";
     }
 
-    await updateTask(task.id, {
-      spentTime: Number(task?.timeSpent) + time || 0,
+    const changes = {
+      timeSpent: Number(task?.timeSpent) + time || 0,
       status: newStatus
-    });
+    };
+
+    await updateTask(task.id, changes);
+
+    dispatch({ type: 'UPDATE_TASK', id: task.id, changes });
     onClose();
   }
   
   return ( 
     <ScrollView
-      keyboardShouldPersistTaps="handled"  // 👈 this is the fix
+      keyboardShouldPersistTaps="handled"  
       contentContainerStyle={styles.container}
     >
       <Text style={styles.label}>
@@ -45,7 +51,7 @@ export default function AddSpentTimeModal ({task, onClose, calledFunction}: Prop
         keyboardType="numeric"
       />
       <Pressable
-        onPress={() => update(Number(minutes))}  // no need to manually dismiss
+        onPress={() => update(Number(minutes))}  
         style={styles.confirmButton}
       >
         <Text style={styles.confirmText}>Confirm</Text>

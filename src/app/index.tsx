@@ -6,9 +6,9 @@ import AsyncData from "../components/asyncData/AsyncData";
 import ProgressBar from "../components/general/ProgressBar";
 import Tasklist from "../components/tasks/TaskList";
 import { auth } from "../config/FirebaseConfig";
+import { useTasks } from "../context/TaskContext";
 import { ColorsPrimary } from "../themes/Colors";
 import { FontFamily } from "../themes/Fonts";
-import { TaskType } from "../types/TaskType";
 
 export type SelectedFilter =
   | { type: "tag"; value: string }
@@ -16,8 +16,8 @@ export type SelectedFilter =
 
 export default function Index() {
 
-  const [tasks, setTasks] = useState<TaskType[]>([]);
   const [loading, setLoading] = useState(false)
+  const {dispatch, tasks} = useTasks();
 
   useEffect(() => {
     setLoading(true);
@@ -29,14 +29,14 @@ export default function Index() {
 
       try {
         const dbTasks = await getTodaysTasks();
-        setTasks(dbTasks);
+        dispatch({type: "SET_TASKS", payload: dbTasks})
       } finally {
         setLoading(false);
       }
     });
 
     return unsubscribe;
-  }, []);
+  }, [dispatch]);
 
 
   const today: Date = new Date()
@@ -67,7 +67,7 @@ export default function Index() {
         </View>
           <View style={styles.centerImage}/>
           <View style={styles.progressBar}>
-            <ProgressBar tasks={tasks}/>
+            <ProgressBar />
           </View>
           <Text style={styles.todayTasks}>{`Today's Tasks`}</Text>
           <AsyncData loading={loading}>

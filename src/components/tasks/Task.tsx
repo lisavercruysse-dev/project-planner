@@ -1,6 +1,7 @@
 import { getChildTasks, hasChildren } from '@/src/api';
+import { useTasks } from '@/src/context/TaskContext';
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ColorsPrimary } from "../../themes/Colors";
 import { FontFamily } from "../../themes/Fonts";
@@ -14,12 +15,14 @@ type Props = {
 }
 
 export default function Task ({ task, level =  0}: Props) {
+  const {tasks} = useTasks();
+  const taskData = tasks.find(t => t.id === task.id) ?? task;
 
   const [detailsVisible, setDetailsVisible] = useState(false);
-  const [taskData, setTaskData] = useState<TaskType>(task);  
   const [expanded, setExpanded] = useState(false);
   const [children, setChildren] = useState<TaskType[]>([]);
   const [hasKids, setHasKids] = useState(false)
+
 
   useEffect(() => {
     hasChildren(task.id).then(setHasKids);
@@ -32,10 +35,6 @@ export default function Task ({ task, level =  0}: Props) {
     }
     setExpanded(!expanded);
   }
-
-  const handleFetch = useCallback((taskDetails: TaskType | undefined) => {
-    if (taskDetails) setTaskData(taskDetails);
-  }, []);
     
   return (
     <View style={{ marginLeft: level * 15 }}>
@@ -51,7 +50,7 @@ export default function Task ({ task, level =  0}: Props) {
             onPress={() => setDetailsVisible(!detailsVisible)}
             style={[
               styles.button,
-              { backgroundColor: taskData.status === "completed" ? "#215520" : ColorsPrimary.VAR9 }
+              { backgroundColor: taskData.status === "completed" ? "#78C72C" : taskData.status === "in progress" ? "#F0CB24" : ColorsPrimary.VAR9}
             ]}
           >
             <Text style={styles.buttonText}>View</Text>
@@ -80,7 +79,7 @@ export default function Task ({ task, level =  0}: Props) {
           <Pressable onPress={() => setDetailsVisible(false)} style={styles.modalBackground}>
             <View style={styles.modal}>  
               <ScrollView keyboardShouldPersistTaps="handled">
-                <TaskDetailModal task={taskData} onFetch={handleFetch}/>
+                <TaskDetailModal task={taskData}/>
               </ScrollView>
             </View>
           </Pressable>

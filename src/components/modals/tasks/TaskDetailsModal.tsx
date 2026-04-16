@@ -1,4 +1,3 @@
-import { getTaskDetails, updateTask } from '@/src/api';
 import { useTasks } from '@/src/context/TaskContext';
 import { ColorsPrimary } from '@/src/themes/Colors';
 import { FontFamily } from '@/src/themes/Fonts';
@@ -9,6 +8,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { getTaskDetails, updateTask } from '../../../api/tasks';
 import AsyncData from '../../asyncData/AsyncData';
 import AddSpentTimeModal from './AddSpentTimeModal';
 

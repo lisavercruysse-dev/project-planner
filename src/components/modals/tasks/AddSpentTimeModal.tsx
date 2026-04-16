@@ -1,10 +1,10 @@
-import { updateTask } from "@/src/api"
 import { useTasks } from "@/src/context/TaskContext"
 import { ColorsPrimary } from "@/src/themes/Colors"
 import { FontFamily } from "@/src/themes/Fonts"
 import { TaskType } from "@/src/types/TaskType"
 import { useState } from "react"
 import { Pressable, ScrollView, StyleSheet, Text, TextInput } from "react-native"
+import { updateTask } from "../../../api/tasks"
 
 type Props = {
   task: TaskType,

@@ -1,7 +1,7 @@
 import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { getTodaysTasks } from "../api/index";
+import { getTodaysTasks } from "../api/tasks";
 import AsyncData from "../components/asyncData/AsyncData";
 import ProgressBar from "../components/general/ProgressBar";
 import Tasklist from "../components/tasks/TaskList";

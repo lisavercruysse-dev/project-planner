@@ -1,50 +1,9 @@
-import { collection, doc, getDoc, getDocs, limit, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, limit, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../config/FirebaseConfig";
+import { mapData, mapSingleData } from "./taskUtil";
 
-
-  //Util functions
-  const mapData = (snapshot) => {
-    return snapshot.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        name: data.name,
-        status: data.status,
-        estimatedTime: data.estimatedTime || 0,
-        date: data.plannedDate?.toDate?.() || new Date(),
-        timeSpent: data.spentTime || 0,
-        description: data.description || "",
-        parent: data.parent || null, 
-        children: [],     
-      };
-    });
-  };
-
-  const mapSingleData = (id, data) => ({
-    id,
-    name: data.name,
-    status: data.status,
-    estimatedTime: data.estimatedTime || 0,
-    date: data.plannedDate?.toDate?.() || new Date(),
-    timeSpent: data.spentTime || 0,
-    description: data.description || "",
-    parent: data.parent || null,
-    children: [],
-  });
-
-  export const getLinkedData = async (ref) => {
-    if (!ref) return null;
-
-    const snapshot = await getDoc(ref);
-    if (!snapshot.exists()) return null;
-
-    return {
-      id: snapshot.id, ...snapshot.data()
-    };
-  }
-
-  //Data fetching
-  export const hasChildren = async (taskId) => {
+//fetching
+export const hasChildren = async (taskId) => {
     const taskCollection = collection(db, "tasks");
     const q = query(taskCollection, where("parent", "==", doc(db, "tasks", taskId)), limit(1));
     const snapshot = await getDocs(q);
@@ -105,8 +64,24 @@ export const getTaskDetails = async (taskId) => {
   return { task: taskData, feature: featureData, project: projectData, parent: parentData };
 };
 
-  //Writing data
+  //writing
   export async function updateTask(taskId, data) {
     const ref = doc(db, "tasks", taskId);
     await updateDoc(ref, data);
+  }
+
+  export async function createTask(data) {
+    const taskCollection = collection(db, "tasks");
+
+    const newTask = {
+      ...data,
+      parent: data.parent ? doc(db, "tasks", data.parent) : null,
+      feature: data.feature ? doc(db, "features", data.feature) : null,
+    }
+
+    const docRef = await addDoc(taskCollection, newTask);
+    return {
+      id: docRef.id,
+      ...data,
+    };
   }

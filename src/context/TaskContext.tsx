@@ -20,6 +20,8 @@ const TaskContext = createContext<TaskContextType | null>(null);
             ? { ...task, ...action.changes }
             : task
         );
+      case "ADD_TASK":
+        return [action.payload, ...state];
       case 'SET_TASKS':
         return action.payload;
       default:

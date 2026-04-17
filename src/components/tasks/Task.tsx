@@ -1,8 +1,8 @@
-import { getChildTasks, hasChildren } from '@/src/api';
 import { useTasks } from '@/src/context/TaskContext';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { getChildTasks, hasChildren } from '../../api/tasks';
 import { ColorsPrimary } from "../../themes/Colors";
 import { FontFamily } from "../../themes/Fonts";
 import { TaskType } from "../../types/TaskType";

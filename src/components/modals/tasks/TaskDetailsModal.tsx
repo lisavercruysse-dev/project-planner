@@ -110,7 +110,7 @@ export default function TaskDetailModal({task}: Props) {
                   Estimated time: {taskDetails?.task.estimatedTime}
                 </Text>
                 <Text style={styles.details}>
-                  Spent time: {taskDetails?.task.timeSpent}
+                  Spent time: {taskDetails?.task.spentTime}
                 </Text>
               </View>
 

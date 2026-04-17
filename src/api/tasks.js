@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, limit, query, updateDoc, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, limit, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../config/FirebaseConfig";
 import { mapData, mapSingleData } from "./taskUtil";
 
@@ -68,4 +68,20 @@ export const getTaskDetails = async (taskId) => {
   export async function updateTask(taskId, data) {
     const ref = doc(db, "tasks", taskId);
     await updateDoc(ref, data);
+  }
+
+  export async function createTask(data) {
+    const taskCollection = collection(db, "tasks");
+
+    const newTask = {
+      ...data,
+      parent: data.parent ? doc(db, "tasks", data.parent) : null,
+      feature: data.feature ? doc(db, "features", data.feature) : null,
+    }
+
+    const docRef = await addDoc(taskCollection, newTask);
+    return {
+      id: docRef.id,
+      ...data,
+    };
   }

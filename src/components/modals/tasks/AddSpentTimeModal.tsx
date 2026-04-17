@@ -26,7 +26,7 @@ export default function AddSpentTimeModal ({task, onClose, calledFunction}: Prop
     }
 
     const changes = {
-      timeSpent: Number(task?.timeSpent) + time || 0,
+      spentTime: Number(task?.spentTime) + time || 0,
       status: newStatus
     };
 

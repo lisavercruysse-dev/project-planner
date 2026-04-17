@@ -38,9 +38,11 @@ export default function FeatureDetailModal({feature}: Props) {
           onPress={() => setAddTaskModalVisible(false)}
           style={styles.modalBackground}
           >
-            <View style={styles.modal}>
-              <AddTaskModal parent={feature}/>
-            </View>
+            <Pressable onPress={e => e.stopPropagation()}>
+              <View style={styles.modal}>
+                <AddTaskModal parent={feature} type="feature" onClose={() => setAddTaskModalVisible(false)}/>
+              </View>
+            </Pressable>
           </Pressable>
         </ScrollView>
       </Modal>

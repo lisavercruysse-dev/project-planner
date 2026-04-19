@@ -131,7 +131,7 @@ export default function AddTaskModal({parent, type, onClose}: Props) {
         <TextInput 
         style={styles.input}
         onChangeText={onChangeTime}
-        placeholder='name'
+        placeholder='30'
         keyboardType='numeric'
         />
       </View>

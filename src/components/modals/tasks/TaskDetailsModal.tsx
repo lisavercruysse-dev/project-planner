@@ -94,14 +94,13 @@ export default function TaskDetailModal({task}: Props) {
 
               <View style={styles.midSectionContainer}>
                 <Text style={styles.details}>
-                  Project: {taskDetails?.project
-                  .name}
+                  Project: {taskDetails?.project?.name ?? "/"}
                 </Text>
                 <Text style={styles.details}>
-                  Feature: {taskDetails?.feature.name}
+                  Feature: {taskDetails?.feature?.name ?? "/"}
                 </Text>
                 <Text style={styles.details}>
-                  Parent task: {taskDetails?.parent ? taskDetails.parent.name : "/"}
+                  Parent task: {taskDetails?.parent?.name ?? "/"}
                 </Text>
               </View>
 

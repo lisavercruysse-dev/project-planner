@@ -12,6 +12,7 @@
         spentTime: data.spentTime || 0,
         description: data.description || "",
         parent: data.parent || null, 
+        feature: data.feature || null,
         children: [],     
       };
     });
@@ -26,6 +27,7 @@
     spentTime: data.spentTime || 0,
     description: data.description || "",
     parent: data.parent || null,
+    feature: data.feature || null,
     children: [],
   });
 

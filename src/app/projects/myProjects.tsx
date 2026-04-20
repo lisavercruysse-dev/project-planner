@@ -14,7 +14,6 @@ export default function Projects () {
     const fetchData = async () => {
       try {
         const dbProjects = await getAllProjects()
-        console.log(dbProjects)
         setProjects(dbProjects)
       } finally {
         setLoading(false)

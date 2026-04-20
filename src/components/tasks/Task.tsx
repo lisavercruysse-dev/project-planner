@@ -36,7 +36,8 @@ export default function Task ({ task, level =  0}: Props) {
     setExpanded(!expanded);
   }
     
-  return (
+return (
+  <View>
     <View style={{ marginLeft: level * 15 }}>
       <View style={styles.taskContainer} key={task.id}>
         <View>
@@ -55,15 +56,17 @@ export default function Task ({ task, level =  0}: Props) {
           >
             <Text style={styles.buttonText}>View</Text>
           </Pressable>
-            <Pressable disabled={!hasKids} onPress={handleExpandTask}>
-              <AntDesign name={expanded ? "caret-up" : "caret-down"} size={24} color={hasKids ? ColorsPrimary.VAR9 : "grey"} />
-            </Pressable>
+          <Pressable disabled={!hasKids} onPress={handleExpandTask}>
+            <AntDesign name={expanded ? "caret-up" : "caret-down"} size={24} color={hasKids ? ColorsPrimary.VAR9 : "grey"} />
+          </Pressable>
         </View>
       </View>
+    </View>
+    <View style={{ borderBottomWidth: 1, borderColor: ColorsPrimary.VAR9 + 10 }} />
 
-      {expanded && children.map(child => (
-        <Task key={child.id} task={child} level={level +1}/>
-      ))}
+    {expanded && children.map(child => (
+      <Task key={child.id} task={child} level={level + 1}/>
+    ))}
 
       <Modal
         visible={detailsVisible}
@@ -95,8 +98,6 @@ const styles = StyleSheet.create({
     width: "100%",
     justifyContent: "space-between",
     padding: 20,
-    borderColor: ColorsPrimary.VAR9 + 10,
-    borderBottomWidth: 1
   },
   buttonContainer: {
     flexDirection: "row",
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
   },
   mainText: {
     fontSize: 15,
-    fontFamily: FontFamily.SEMIBOLD,
+    fontFamily: FontFamily.MEDIUM,
     color: ColorsPrimary.VAR9
   },
   secondaryText: {

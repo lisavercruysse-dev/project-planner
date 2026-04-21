@@ -10,6 +10,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { getTaskDetails, updateTask } from '../../../api/tasks';
 import AsyncData from '../../asyncData/AsyncData';
+import AddTaskModal from '../features/AddTaskModal';
 import AddSpentTimeModal from './AddSpentTimeModal';
 
 
@@ -30,6 +31,7 @@ export default function TaskDetailModal({task}: Props) {
   const [taskDetails, setTaskDetails] = useState<TaskDetailsType | null>(null);
   const [loading, setLoading] = useState(false);
   const [addTimeVisible, setAddTimeVisible] = useState(false);
+  const [addTaskVisible, setAddTaskVisible] = useState(false);
   const [functionCalled, setFunctionCalled] = useState("")
 
   const fetchTaskDetails = useCallback(async () => {
@@ -114,6 +116,11 @@ export default function TaskDetailModal({task}: Props) {
               </View>
 
             <View style={styles.buttonContainer}>
+                <Pressable onPress={() => setAddTaskVisible(!addTaskVisible)} style={styles.completeButton}>
+                  <Text style={styles.completeButtonText}>
+                    Add Task
+                  </Text>
+                </Pressable>
                 <Pressable onPress={() => { 
                     setFunctionCalled("addSpentTime")
                     setAddTimeVisible(!addTimeVisible) }} 
@@ -157,6 +164,29 @@ export default function TaskDetailModal({task}: Props) {
                   <View style={styles.modal}>  
                     {taskDetails &&
                       <AddSpentTimeModal task={taskDetails.task} calledFunction={functionCalled} onClose={update}/>
+                    }
+                  </View>
+                </Pressable>
+              </ScrollView>
+            </Modal>
+            <Modal
+              visible={addTaskVisible}
+              onRequestClose={() => setAddTaskVisible(false)}
+              animationType='fade'
+              transparent={true}
+            >
+              <ScrollView
+                scrollEnabled={false}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ flex: 1 }}
+              >
+                <Pressable 
+                  onPress={() => setAddTaskVisible(false)} 
+                  style={styles.modalBackground}
+                >
+                  <View style={styles.modal}>  
+                    {taskDetails &&
+                      <AddTaskModal parent={task} type={"task"} onClose={update}/>
                     }
                   </View>
                 </Pressable>
@@ -225,7 +255,7 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   buttonContainer: {
-    flexDirection: "column",
+    flexDirection: "row",
     gap: 10
   },
     modalBackground: {

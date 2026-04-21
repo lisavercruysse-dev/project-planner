@@ -15,8 +15,11 @@ type Props = {
 
 export default function Feature({feature}: Props) {
   const [detailsVisible, setDetailsVisible] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const {tasks, dispatch} = useTasks();
+  
   const featureTasks = tasks.filter(t => t.feature?.id === feature.id);
+  const hasTasks = featureTasks.length > 0;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,8 +42,8 @@ export default function Feature({feature}: Props) {
                 View
               </Text>
             </Pressable>
-            <Pressable>
-              <AntDesign name={ "caret-up" } size={24} color={ColorsPrimary.VAR9 } />
+            <Pressable onPress={() => setExpanded(!expanded)}>
+              <AntDesign name={expanded ? "caret-up" : "caret-down" } size={24} color={hasTasks ? ColorsPrimary.VAR9 : "grey" } />
             </Pressable>
           </View>
         </View>
@@ -50,7 +53,7 @@ export default function Feature({feature}: Props) {
           animationType="fade"
           transparent={true}
         >
-          <Pressable onPress={() => setDetailsVisible(false)} style={styles.modalBackground}>
+          <Pressable onPress={() => setDetailsVisible(!detailsVisible)} style={styles.modalBackground}>
             <View style={styles.modal}>
               <FeatureDetailModal feature={feature}/>
             </View>
@@ -58,7 +61,9 @@ export default function Feature({feature}: Props) {
         </Modal>
       </View>
       <View>
-        <TaskList tasks={featureTasks}/>
+        {expanded && (
+          <TaskList tasks={featureTasks}/>  
+        )}
       </View>
     </View>
 

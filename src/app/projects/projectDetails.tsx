@@ -36,7 +36,10 @@ export default function ProjectDetails () {
             {project?.description}
           </Text>
         </View>
-        <FeatureList features={features}/>
+        <View>
+          <Text style={styles.subTitle}>Features</Text>
+          <FeatureList features={features}/>
+        </View>
       </View>
     </ScrollView>
   )
@@ -46,7 +49,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     padding: 20,
-    gap: 30
+    gap: 20
   },
   title: {
     fontFamily: FontFamily.BOLD,
@@ -60,6 +63,11 @@ const styles = StyleSheet.create({
   titleDescriptionContainer: {
     flexDirection: "column",
     gap: 15
+  },
+  subTitle: {
+    fontFamily: FontFamily.BOLD,
+    color: ColorsPrimary.VAR9,
+    fontSize: 20
   }
 })
 

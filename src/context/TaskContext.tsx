@@ -20,6 +20,11 @@ const TaskContext = createContext<TaskContextType | null>(null);
             ? { ...task, ...action.changes }
             : task
         );
+      case 'MERGE_TASKS': 
+        const existingIds = new Set(state.map(t => t.id));
+        const newTasks = action.payload.filter(t => !existingIds.has(t.id));
+        return [...state, ...newTasks];
+      ;
       case "ADD_TASK":
         return [action.payload, ...state];
       case 'SET_TASKS':

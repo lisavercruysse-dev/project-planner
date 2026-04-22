@@ -10,6 +10,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { getTaskDetails, updateTask } from '../../../api/tasks';
 import AsyncData from '../../asyncData/AsyncData';
+import AddTaskModal from '../features/AddTaskModal';
 import AddSpentTimeModal from './AddSpentTimeModal';
 
 
@@ -30,6 +31,7 @@ export default function TaskDetailModal({task}: Props) {
   const [taskDetails, setTaskDetails] = useState<TaskDetailsType | null>(null);
   const [loading, setLoading] = useState(false);
   const [addTimeVisible, setAddTimeVisible] = useState(false);
+  const [addTaskVisible, setAddTaskVisible] = useState(false);
   const [functionCalled, setFunctionCalled] = useState("")
 
   const fetchTaskDetails = useCallback(async () => {
@@ -46,9 +48,10 @@ export default function TaskDetailModal({task}: Props) {
     fetchTaskDetails()
   }, [task.id, fetchTaskDetails])
 
-  const update = async () => {
+  const update = async (refetch = false) => {
     setAddTimeVisible(false)
-    await fetchTaskDetails()
+    setAddTaskVisible(false)
+    if (refetch) await fetchTaskDetails();
   }
 
   const markIncomplete = async () => {
@@ -94,14 +97,13 @@ export default function TaskDetailModal({task}: Props) {
 
               <View style={styles.midSectionContainer}>
                 <Text style={styles.details}>
-                  Project: {taskDetails?.project
-                  .name}
+                  Project: {taskDetails?.project?.name ?? "/"}
                 </Text>
                 <Text style={styles.details}>
-                  Feature: {taskDetails?.feature.name}
+                  Feature: {taskDetails?.feature?.name ?? "/"}
                 </Text>
                 <Text style={styles.details}>
-                  Parent task: {taskDetails?.parent ? taskDetails.parent.name : "/"}
+                  Parent task: {taskDetails?.parent?.name ?? "/"}
                 </Text>
               </View>
 
@@ -115,6 +117,11 @@ export default function TaskDetailModal({task}: Props) {
               </View>
 
             <View style={styles.buttonContainer}>
+                <Pressable onPress={() => setAddTaskVisible(!addTaskVisible)} style={styles.completeButton}>
+                  <Text style={styles.completeButtonText}>
+                    Add Task
+                  </Text>
+                </Pressable>
                 <Pressable onPress={() => { 
                     setFunctionCalled("addSpentTime")
                     setAddTimeVisible(!addTimeVisible) }} 
@@ -157,7 +164,30 @@ export default function TaskDetailModal({task}: Props) {
                 >
                   <View style={styles.modal}>  
                     {taskDetails &&
-                      <AddSpentTimeModal task={taskDetails.task} calledFunction={functionCalled} onClose={update}/>
+                      <AddSpentTimeModal task={taskDetails.task} calledFunction={functionCalled} onClose={() => update(true)}/>
+                    }
+                  </View>
+                </Pressable>
+              </ScrollView>
+            </Modal>
+            <Modal
+              visible={addTaskVisible}
+              onRequestClose={() => setAddTaskVisible(false)}
+              animationType='fade'
+              transparent={true}
+            >
+              <ScrollView
+                scrollEnabled={false}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{ flex: 1 }}
+              >
+                <Pressable 
+                  onPress={() => setAddTaskVisible(false)} 
+                  style={styles.modalBackground}
+                >
+                  <View style={styles.modal}>  
+                    {taskDetails &&
+                      <AddTaskModal parent={task} type={"task"} onClose={() => update(false)}/>
                     }
                   </View>
                 </Pressable>
@@ -226,7 +256,7 @@ const styles = StyleSheet.create({
     textAlign: "center"
   },
   buttonContainer: {
-    flexDirection: "column",
+    flexDirection: "row",
     gap: 10
   },
     modalBackground: {

@@ -54,10 +54,6 @@ export default function RootLayout() {
                 tabBarIcon: ({color, size}) => <FontAwesome5 name="tasks" size={size} color={color} />,
                 tabBarShowLabel: false,
               }}/>
-              <Tabs.Screen name='brainstorm' options={{
-                tabBarIcon: ({color, size}) => <FontAwesome5 name="brain" size={size} color={color} />,
-                tabBarShowLabel: false,
-              }}/>
             </Tabs>
           </View>
         </SafeAreaView>

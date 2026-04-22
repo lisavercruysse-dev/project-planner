@@ -40,11 +40,17 @@ export default function Index() {
 
 
   const today: Date = new Date()
+  today.setHours(0, 0, 0, 0)
   const formattedDate = today.toLocaleDateString("en-GB", {
     weekday: "short",
     month: "short",
     day: "numeric",
   }).split(",")
+
+  const todaysTasks = tasks.filter(t => {
+    if (!t.plannedDate) return false;
+    return new Date(t.plannedDate).toDateString() === today.toDateString();
+  });
 
   return (
     <ScrollView 
@@ -67,11 +73,11 @@ export default function Index() {
         </View>
           <View style={styles.centerImage}/>
           <View style={styles.progressBar}>
-            <ProgressBar />
+            <ProgressBar tasks={todaysTasks}/>
           </View>
           <Text style={styles.todayTasks}>{`Today's Tasks`}</Text>
           <AsyncData loading={loading}>
-            <Tasklist tasks={tasks}/>
+            <Tasklist tasks={todaysTasks}/>
           </AsyncData>
       </View>
     </ScrollView>

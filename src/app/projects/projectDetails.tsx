@@ -1,26 +1,37 @@
 import { getProjectById } from "@/src/api/projects"
+import BrainstormList from "@/src/components/brainstorms/BrainstormList"
+import AddBrainstormModal from "@/src/components/modals/brainstorms/addBrainstormModal"
+import AddFeatureModal from "@/src/components/modals/features/AddFeatureModal"
+import { BrainstormType } from "@/src/types/BrainstormType"
 import { FeatureType } from "@/src/types/FeatureType"
 import { ProjectType } from "@/src/types/ProjectType"
 import { useLocalSearchParams } from "expo-router"
 import { useEffect, useState } from "react"
-import { ScrollView, StyleSheet, Text, View } from "react-native"
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { getProjectBrainstorms } from "../../api/brainstorms"
 import { getProjectFeatures } from "../../api/features"
 import FeatureList from "../../components/features/FeatureList"
 import { ColorsPrimary } from "../../themes/Colors"
 import { FontFamily } from "../../themes/Fonts"
 
-
 export default function ProjectDetails () {
   const [project, setProject] = useState<ProjectType | null>(null)
   const [features, setFeatures] = useState<FeatureType[]>([])
+  const [brainstorms, setBrainstorms] = useState<BrainstormType[]>([])
+
+  const [addFeatureVisible, setAddFeatureVisible] = useState(false);
+  const [addBrainstormVisible, setAddBrainstormVisible] = useState(false);
+
   const {id} = useLocalSearchParams()
 
   useEffect(() => {
     const fetchData = async () => {
       const dbProject = await getProjectById(id);
       const dbFeatures = await getProjectFeatures(id);
+      const dbBrainstorms = await getProjectBrainstorms(id);
       setProject(dbProject)
       setFeatures(dbFeatures)
+      setBrainstorms(dbBrainstorms)
     }
     fetchData()
   }, [id])
@@ -36,8 +47,72 @@ export default function ProjectDetails () {
             {project?.description}
           </Text>
         </View>
-        <FeatureList features={features}/>
+        <View>
+          <Text style={styles.subTitle}>Features</Text>
+          <FeatureList features={features}/>
+          <Pressable onPress={() => setAddFeatureVisible(true)} style={styles.mainButton}>
+            <Text style={styles.mainButtonText}>
+              Add New
+            </Text>
+          </Pressable>
+        </View>
+        <View>
+          <Text style={styles.subTitle}>
+            Brainstorms
+          </Text>
+          <BrainstormList brainstorms={brainstorms}/>
+            <Pressable style={styles.mainButton}>
+              <Text onPress={() => setAddBrainstormVisible(true)} style={styles.mainButtonText}>
+                Add New
+              </Text>
+            </Pressable>
+        </View>
       </View>
+
+      <Modal
+        visible={addBrainstormVisible}
+        onRequestClose={() => setAddBrainstormVisible(false)}
+        animationType='fade'
+        transparent={true}
+      >
+        <ScrollView
+          scrollEnabled={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <Pressable 
+            onPress={() => setAddBrainstormVisible(false)} 
+            style={styles.modalBackground}
+          >
+            <View style={styles.modal}>  
+                <AddBrainstormModal />
+            </View>
+          </Pressable>
+        </ScrollView>
+      </Modal>
+
+      <Modal
+        visible={addFeatureVisible}
+        onRequestClose={() => setAddFeatureVisible(false)}
+        animationType='fade'
+        transparent={true}
+      >
+        <ScrollView
+          scrollEnabled={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <Pressable 
+            onPress={() => setAddFeatureVisible(false)} 
+            style={styles.modalBackground}
+          >
+            <View style={styles.modal}>  
+                <AddFeatureModal />
+            </View>
+          </Pressable>
+        </ScrollView>
+      </Modal>
+
     </ScrollView>
   )
 }
@@ -46,7 +121,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: "column",
     padding: 20,
-    gap: 30
+    gap: 20
   },
   title: {
     fontFamily: FontFamily.BOLD,
@@ -60,6 +135,39 @@ const styles = StyleSheet.create({
   titleDescriptionContainer: {
     flexDirection: "column",
     gap: 15
+  },
+  subTitle: {
+    fontFamily: FontFamily.BOLD,
+    color: ColorsPrimary.VAR9,
+    fontSize: 20
+  },
+
+  mainButton: {
+    backgroundColor: ColorsPrimary.VAR9,
+    alignSelf: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 15,
+    margin: 20
+  },
+  mainButtonText: {
+    fontFamily: FontFamily.BOLD,
+    fontSize: 16,
+    color: ColorsPrimary.VAR1
+  },
+
+  modalBackground: {
+    backgroundColor: '#00000050',
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  modal: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 15,
+    width: '100%',
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0
   }
 })
 

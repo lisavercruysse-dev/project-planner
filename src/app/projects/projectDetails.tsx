@@ -1,11 +1,13 @@
 import { getProjectById } from "@/src/api/projects"
 import BrainstormList from "@/src/components/brainstorms/BrainstormList"
+import AddBrainstormModal from "@/src/components/modals/brainstorms/addBrainstormModal"
+import AddFeatureModal from "@/src/components/modals/features/AddFeatureModal"
 import { BrainstormType } from "@/src/types/BrainstormType"
 import { FeatureType } from "@/src/types/FeatureType"
 import { ProjectType } from "@/src/types/ProjectType"
 import { useLocalSearchParams } from "expo-router"
 import { useEffect, useState } from "react"
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import { getProjectBrainstorms } from "../../api/brainstorms"
 import { getProjectFeatures } from "../../api/features"
 import FeatureList from "../../components/features/FeatureList"
@@ -48,7 +50,7 @@ export default function ProjectDetails () {
         <View>
           <Text style={styles.subTitle}>Features</Text>
           <FeatureList features={features}/>
-          <Pressable style={styles.mainButton}>
+          <Pressable onPress={() => setAddFeatureVisible(true)} style={styles.mainButton}>
             <Text style={styles.mainButtonText}>
               Add New
             </Text>
@@ -60,12 +62,57 @@ export default function ProjectDetails () {
           </Text>
           <BrainstormList brainstorms={brainstorms}/>
             <Pressable style={styles.mainButton}>
-              <Text style={styles.mainButtonText}>
+              <Text onPress={() => setAddBrainstormVisible(true)} style={styles.mainButtonText}>
                 Add New
               </Text>
             </Pressable>
         </View>
       </View>
+
+      <Modal
+        visible={addBrainstormVisible}
+        onRequestClose={() => setAddBrainstormVisible(false)}
+        animationType='fade'
+        transparent={true}
+      >
+        <ScrollView
+          scrollEnabled={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <Pressable 
+            onPress={() => setAddBrainstormVisible(false)} 
+            style={styles.modalBackground}
+          >
+            <View style={styles.modal}>  
+                <AddBrainstormModal />
+            </View>
+          </Pressable>
+        </ScrollView>
+      </Modal>
+
+      <Modal
+        visible={addFeatureVisible}
+        onRequestClose={() => setAddFeatureVisible(false)}
+        animationType='fade'
+        transparent={true}
+      >
+        <ScrollView
+          scrollEnabled={false}
+          keyboardShouldPersistTaps="handled"
+          contentContainerStyle={{ flex: 1 }}
+        >
+          <Pressable 
+            onPress={() => setAddFeatureVisible(false)} 
+            style={styles.modalBackground}
+          >
+            <View style={styles.modal}>  
+                <AddFeatureModal />
+            </View>
+          </Pressable>
+        </ScrollView>
+      </Modal>
+
     </ScrollView>
   )
 }
@@ -105,8 +152,22 @@ const styles = StyleSheet.create({
   },
   mainButtonText: {
     fontFamily: FontFamily.BOLD,
-    fontSize: 18,
+    fontSize: 16,
     color: ColorsPrimary.VAR1
+  },
+
+  modalBackground: {
+    backgroundColor: '#00000050',
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  modal: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 15,
+    width: '100%',
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0
   }
 })
 

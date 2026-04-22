@@ -5,7 +5,7 @@ export type TaskType = {
   name: string;
   status: string;
   estimatedTime: number;
-  date: Date;
+  plannedDate: Date;
   spentTime: number;
   description: string;
   parent: TaskType | null;

@@ -100,20 +100,33 @@ export const getProjectTasks = async (projectId) => {
     await updateDoc(ref, data);
   }
 
-  export async function createTask(data) {
-    const taskCollection = collection(db, "tasks");
+export async function createTask(data) {
+  const taskCollection = collection(db, "tasks");
 
-    const newTask = {
-      ...data,
-      parent: data.parent ? doc(db, "tasks", data.parent) : null,
-      feature: data.feature ? doc(db, "features", data.feature) : null,
+  let plannedDate = data.plannedDate ?? null;
+
+  if (!plannedDate && data.parent) {
+    const parentSnap = await getDoc(doc(db, "tasks", data.parent));
+    if (parentSnap.exists()) {
+      const raw = parentSnap.data().plannedDate?.toDate?.() ?? null;
+      if (raw) raw.setHours(0, 0, 0, 0);
+      plannedDate = raw;
     }
-
-    const docRef = await addDoc(taskCollection, newTask);
-    return {
-      id: docRef.id,
-      ...data,
-      parent: data.parent ? { id: data.parent } : null,  
-      feature: data.feature ? { id: data.feature } : null,  
-    };
   }
+
+  const newTask = {
+    ...data,
+    plannedDate,
+    parent: data.parent ? doc(db, "tasks", data.parent) : null,
+    feature: data.feature ? doc(db, "features", data.feature) : null,
+  }
+
+  const docRef = await addDoc(taskCollection, newTask);
+  return {
+    id: docRef.id,
+    ...data,
+    plannedDate,  
+    parent: data.parent ? { id: data.parent } : null,
+    feature: data.feature ? { id: data.feature } : null,
+  };
+}

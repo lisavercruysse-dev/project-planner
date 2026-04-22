@@ -41,6 +41,22 @@ export default function AddTaskModal({parent, type, onClose}: Props) {
         message: "Name must be at least 2 characters",
       })
     }
+    if (type === "task") {
+      const parentTask = parent as TaskType;
+      if (date && parentTask.plannedDate) {
+        const selectedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const parentDate = new Date(parentTask.plannedDate);
+        const parentDateOnly = new Date(parentDate.getFullYear(), parentDate.getMonth(), parentDate.getDate());
+
+        if (selectedDate > parentDateOnly) {
+          newErrors.push({
+            field: "date",
+            message: "Date cannot be later than the parent task's date"
+          })
+        }
+      }
+    }
+
     setErrors(newErrors)
     if (newErrors.length === 0) {
       try {
@@ -150,10 +166,16 @@ export default function AddTaskModal({parent, type, onClose}: Props) {
             onChange={(event, selected) => {
               setShowPicker(false)
               if(selected) setDate(selected)
+              setErrors(prev => prev.filter(e => e.field !== "date"))
             }}
           />
         )
         }
+        {getError("date") && (
+          <Text style={{color: "red"}}>
+            {getError("date")}
+          </Text>
+        )}
       </View>
       <Pressable onPress={handleAddTask} style={styles.button}>
         <Text style={styles.buttonText}>
@@ -210,7 +232,3 @@ const styles = StyleSheet.create({
       fontFamily: FontFamily.BOLD
     },
 })
-
-function dispatch(arg0: { type: string; id: any; changes: any; }) {
-  throw new Error('Function not implemented.');
-}

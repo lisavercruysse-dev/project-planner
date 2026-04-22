@@ -48,9 +48,10 @@ export default function TaskDetailModal({task}: Props) {
     fetchTaskDetails()
   }, [task.id, fetchTaskDetails])
 
-  const update = async () => {
+  const update = async (refetch = false) => {
     setAddTimeVisible(false)
-    await fetchTaskDetails()
+    setAddTaskVisible(false)
+    if (refetch) await fetchTaskDetails();
   }
 
   const markIncomplete = async () => {
@@ -163,7 +164,7 @@ export default function TaskDetailModal({task}: Props) {
                 >
                   <View style={styles.modal}>  
                     {taskDetails &&
-                      <AddSpentTimeModal task={taskDetails.task} calledFunction={functionCalled} onClose={update}/>
+                      <AddSpentTimeModal task={taskDetails.task} calledFunction={functionCalled} onClose={() => update(true)}/>
                     }
                   </View>
                 </Pressable>
@@ -186,7 +187,7 @@ export default function TaskDetailModal({task}: Props) {
                 >
                   <View style={styles.modal}>  
                     {taskDetails &&
-                      <AddTaskModal parent={task} type={"task"} onClose={update}/>
+                      <AddTaskModal parent={task} type={"task"} onClose={() => update(false)}/>
                     }
                   </View>
                 </Pressable>

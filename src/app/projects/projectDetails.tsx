@@ -5,7 +5,7 @@ import { BrainstormType } from "@/src/types/BrainstormType"
 import { FeatureType } from "@/src/types/FeatureType"
 import { ProjectType } from "@/src/types/ProjectType"
 import { Link, useFocusEffect, useLocalSearchParams } from "expo-router"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import { getProjectBrainstorms } from "../../api/brainstorms"
 import { getProjectFeatures } from "../../api/features"
@@ -21,17 +21,23 @@ export default function ProjectDetails () {
   const [addFeatureVisible, setAddFeatureVisible] = useState(false);
   const {id} = useLocalSearchParams()
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const dbProject = await getProjectById(id);
+      const dbFeatures = await getProjectFeatures(id);
+      setProject(dbProject)
+      setFeatures(dbFeatures)
+    }
+    fetchData()
+  }, [id])
+
   useFocusEffect(
     useCallback(() => {
-      const fetchData = async () => {
-        const dbProject = await getProjectById(id);
-        const dbFeatures = await getProjectFeatures(id);
+      const fetchBrainstorms = async () => {
         const dbBrainstorms = await getProjectBrainstorms(id);
-        setProject(dbProject)
-        setFeatures(dbFeatures)
         setBrainstorms(dbBrainstorms)
       }
-      fetchData()
+      fetchBrainstorms()
     }, [id])
   )
 

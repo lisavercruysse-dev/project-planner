@@ -14,7 +14,7 @@ export default function Brainstorm ({brainstorm}: Props) {
       <Text style={styles.brainstormName}>
         {brainstorm.name}
       </Text>
-      <Link href={`/projects/brainstorms/BrainstormDetails?id=${brainstorm.id}`} push asChild>
+      <Link href={`/projects/brainstorms/BrainstormDetails?id=${brainstorm.id}&projectId=${brainstorm.project.id}`} push asChild>
         <Pressable style={styles.button}>
           <Text style={styles.buttonText}>
             View

@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "../config/FirebaseConfig";
 import { mapData, mapSingleData } from "./brainstormUtil";
 
@@ -32,4 +32,9 @@ export const createBrainstorm = async(data) => {
     ...data,
     project: data.project,
   }
+}
+
+export const updateBrainstorm = async(id, data) => {
+  const ref = doc(db, "brainstorms", id);
+  await updateDoc(ref, data);
 }

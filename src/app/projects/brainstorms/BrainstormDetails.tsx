@@ -1,4 +1,4 @@
-import { createBrainstorm, getBrainstormById } from "@/src/api/brainstorms";
+import { createBrainstorm, getBrainstormById, updateBrainstorm } from "@/src/api/brainstorms";
 import { getProjectById } from "@/src/api/projects";
 import { ColorsPrimary } from "@/src/themes/Colors";
 import { FontFamily } from "@/src/themes/Fonts";
@@ -13,8 +13,8 @@ export default function BrainstormDetails() {
   const [brainstorm, setBrainstorm] = useState<BrainstormType | null>(null);
   const [project, setProject] = useState<ProjectType | null>(null);
 
-  const [name, onChangeName] = useState(brainstorm?.name || '')
-  const [body, onChangeBody] = useState(brainstorm?.body || '')
+  const [name, onChangeName] = useState('')
+  const [body, onChangeBody] = useState('')
   const isNew = !id
 
   useEffect(() => {
@@ -26,19 +26,27 @@ export default function BrainstormDetails() {
 
       const dbBrainstorm = await getBrainstormById(id)
       setBrainstorm(dbBrainstorm)
+      onChangeName(dbBrainstorm?.name)
+      onChangeBody(dbBrainstorm?.body)
     }
     fetchData()
   }, [id])
 
   const saveBrainstorm = async() => {
     if (!id) {
-      const newBrainstorm = await createBrainstorm({
+      await createBrainstorm({
         name: name === '' ? 'untitled' : name,
         body,
         project: project?.id
       })
-      router.back()
     }
+    else if (id) {
+      await updateBrainstorm(id, {
+        name: name === '' ? 'untitled' : name,
+        body
+      })
+    }
+    router.back()
   }
 
   return (
@@ -48,11 +56,13 @@ export default function BrainstormDetails() {
           Projects - {project?.name}
         </Text>
         <TextInput 
+          value={name}
           onChangeText={onChangeName}
           style={styles.nameInput}
           placeholder="Name"
         />
         <TextInput 
+          value={body}
           onChangeText={onChangeBody}
           style={styles.body}
           placeholder="Start brainstorming..."

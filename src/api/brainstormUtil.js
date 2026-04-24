@@ -9,3 +9,10 @@ export const mapData = (snapshot) => {
     }
   })
 }
+
+export const mapSingleData = (id, data) => ({
+  id,
+  name: data.name,
+  body: data.body,
+  project: data.project || null,
+})

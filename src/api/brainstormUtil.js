@@ -5,7 +5,7 @@ export const mapData = (snapshot) => {
       id: doc.id,
       name: data.name,
       body: data.body,
-      feature: data.feature,
+      project: data.project,
     }
   })
 }

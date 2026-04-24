@@ -1,12 +1,11 @@
 import { getProjectById } from "@/src/api/projects"
 import BrainstormList from "@/src/components/brainstorms/BrainstormList"
-import AddBrainstormModal from "@/src/components/modals/brainstorms/addBrainstormModal"
 import AddFeatureModal from "@/src/components/modals/features/AddFeatureModal"
 import { BrainstormType } from "@/src/types/BrainstormType"
 import { FeatureType } from "@/src/types/FeatureType"
 import { ProjectType } from "@/src/types/ProjectType"
-import { useLocalSearchParams } from "expo-router"
-import { useEffect, useState } from "react"
+import { Link, useFocusEffect, useLocalSearchParams } from "expo-router"
+import { useCallback, useState } from "react"
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native"
 import { getProjectBrainstorms } from "../../api/brainstorms"
 import { getProjectFeatures } from "../../api/features"
@@ -20,21 +19,21 @@ export default function ProjectDetails () {
   const [brainstorms, setBrainstorms] = useState<BrainstormType[]>([])
 
   const [addFeatureVisible, setAddFeatureVisible] = useState(false);
-  const [addBrainstormVisible, setAddBrainstormVisible] = useState(false);
-
   const {id} = useLocalSearchParams()
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const dbProject = await getProjectById(id);
-      const dbFeatures = await getProjectFeatures(id);
-      const dbBrainstorms = await getProjectBrainstorms(id);
-      setProject(dbProject)
-      setFeatures(dbFeatures)
-      setBrainstorms(dbBrainstorms)
-    }
-    fetchData()
-  }, [id])
+  useFocusEffect(
+    useCallback(() => {
+      const fetchData = async () => {
+        const dbProject = await getProjectById(id);
+        const dbFeatures = await getProjectFeatures(id);
+        const dbBrainstorms = await getProjectBrainstorms(id);
+        setProject(dbProject)
+        setFeatures(dbFeatures)
+        setBrainstorms(dbBrainstorms)
+      }
+      fetchData()
+    }, [id])
+  )
 
   return (
     <ScrollView style={{backgroundColor: "white", flex: 1}}>
@@ -61,35 +60,15 @@ export default function ProjectDetails () {
             Brainstorms
           </Text>
           <BrainstormList brainstorms={brainstorms}/>
+          <Link href={`/projects/brainstorms/BrainstormDetails?projectId=${project?.id}`} push asChild>
             <Pressable style={styles.mainButton}>
-              <Text onPress={() => setAddBrainstormVisible(true)} style={styles.mainButtonText}>
+              <Text style={styles.mainButtonText}>
                 Add New
               </Text>
             </Pressable>
+          </Link>
         </View>
       </View>
-
-      <Modal
-        visible={addBrainstormVisible}
-        onRequestClose={() => setAddBrainstormVisible(false)}
-        animationType='fade'
-        transparent={true}
-      >
-        <ScrollView
-          scrollEnabled={false}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flex: 1 }}
-        >
-          <Pressable 
-            onPress={() => setAddBrainstormVisible(false)} 
-            style={styles.modalBackground}
-          >
-            <View style={styles.modal}>  
-                <AddBrainstormModal />
-            </View>
-          </Pressable>
-        </ScrollView>
-      </Modal>
 
       <Modal
         visible={addFeatureVisible}

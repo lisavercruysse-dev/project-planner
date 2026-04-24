@@ -1,8 +1,8 @@
-import { FeatureType } from "./FeatureType";
+import { ProjectType } from "./ProjectType";
 
 export type BrainstormType = {
   id: string;
   name: string;
   body: string;
-  feature: FeatureType
+  project: ProjectType
 }

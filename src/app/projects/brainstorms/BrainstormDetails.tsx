@@ -1,20 +1,19 @@
 import { createBrainstorm, getBrainstormById, updateBrainstorm } from "@/src/api/brainstorms";
 import { getProjectById } from "@/src/api/projects";
+import DeleteConfirmModal from "@/src/components/modals/DeleteConfirmModal";
 import { ColorsPrimary } from "@/src/themes/Colors";
 import { FontFamily } from "@/src/themes/Fonts";
-import { BrainstormType } from "@/src/types/BrainstormType";
 import { ProjectType } from "@/src/types/ProjectType";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
 export default function BrainstormDetails() {
-  const {id, projectId} = useLocalSearchParams();
-  const [brainstorm, setBrainstorm] = useState<BrainstormType | null>(null);
+  const {id, projectId} = useLocalSearchParams<{id: string, projectId: string}>();
   const [project, setProject] = useState<ProjectType | null>(null);
-
   const [name, onChangeName] = useState('')
   const [body, onChangeBody] = useState('')
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
   const isNew = !id
 
   useEffect(() => {
@@ -25,7 +24,6 @@ export default function BrainstormDetails() {
       if (isNew) return  
 
       const dbBrainstorm = await getBrainstormById(id)
-      setBrainstorm(dbBrainstorm)
       onChangeName(dbBrainstorm?.name)
       onChangeBody(dbBrainstorm?.body)
     }
@@ -70,7 +68,7 @@ export default function BrainstormDetails() {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <Pressable style={styles.deleteButton}>
+        <Pressable onPress={() => setShowConfirmModal(!showConfirmModal)} style={styles.deleteButton}>
           <Text style={styles.buttonText}>
             Delete
           </Text>
@@ -81,6 +79,19 @@ export default function BrainstormDetails() {
           </Text>
         </Pressable>
       </View>
+
+      <Modal
+        visible={showConfirmModal}
+        onRequestClose={() => setShowConfirmModal(false)}
+        animationType="fade"
+        transparent={true}
+      >
+        <Pressable onPress={() => setShowConfirmModal(!showConfirmModal)} style={styles.modalBackground}>
+            <View style={styles.modal}>
+              <DeleteConfirmModal id={id} type={"Brainstorm"}/>
+            </View>
+        </Pressable>
+      </Modal>
     </ScrollView>
   )
 }
@@ -134,5 +145,17 @@ const styles = StyleSheet.create({
   buttonText: {
     color: ColorsPrimary.VAR1,
     fontFamily: FontFamily.BOLD
-  }
+  },
+  modalBackground: {
+    backgroundColor: '#00000050',
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  modal: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 15,
+    width: '100%',
+  },
 })

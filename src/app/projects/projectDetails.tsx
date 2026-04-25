@@ -41,6 +41,11 @@ export default function ProjectDetails () {
     }, [id])
   )
 
+  const handleCreateFeature = (feature: FeatureType) => {
+    setFeatures(prev => [...prev, feature]);
+    setAddFeatureVisible(false)
+  }
+
   return (
     <ScrollView style={{backgroundColor: "white", flex: 1}}>
       <View style={styles.container}>
@@ -91,8 +96,10 @@ export default function ProjectDetails () {
             onPress={() => setAddFeatureVisible(false)} 
             style={styles.modalBackground}
           >
-            <View style={styles.modal}>  
-                <AddFeatureModal />
+            <View style={styles.modal}>
+              {project && (
+                <AddFeatureModal project={project} onCreate={handleCreateFeature}/>
+              )}
             </View>
           </Pressable>
         </ScrollView>

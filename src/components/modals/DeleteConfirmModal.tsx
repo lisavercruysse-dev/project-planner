@@ -1,3 +1,4 @@
+import { deleteBrainstorm } from "@/src/api/brainstorms";
 import { ColorsPrimary } from "@/src/themes/Colors";
 import { FontFamily } from "@/src/themes/Fonts";
 import Feather from '@expo/vector-icons/Feather';
@@ -6,9 +7,20 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 type Props = {
   id: string,
   type: string,
+  onClose: () => void;
 }
 
-export default function DeleteConfirmModal({id, type}: Props) {
+export default function DeleteConfirmModal({id, type, onClose}: Props) {
+
+  const handleDelete = async(id: string, type: string) => {
+    switch (type.toLowerCase()) {
+      case "brainstorm": 
+        deleteBrainstorm(id)
+        break;
+    }
+    onClose()
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
@@ -27,7 +39,7 @@ export default function DeleteConfirmModal({id, type}: Props) {
             Cancel
           </Text>
         </Pressable>
-        <Pressable style={styles.deleteButton}>
+        <Pressable onPress={() => handleDelete(id, type)} style={styles.deleteButton}>
           <Text style={styles.buttonText}>
             Confirm
           </Text>

@@ -88,7 +88,7 @@ export default function BrainstormDetails() {
       >
         <Pressable onPress={() => setShowConfirmModal(!showConfirmModal)} style={styles.modalBackground}>
             <View style={styles.modal}>
-              <DeleteConfirmModal id={id} type={"Brainstorm"}/>
+              <DeleteConfirmModal id={id} type={"Brainstorm"} onClose={() => router.back()}/>
             </View>
         </Pressable>
       </Modal>

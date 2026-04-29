@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
 
   mainButton: {
-    backgroundColor: ColorsPrimary.VAR9,
+    backgroundColor: ColorsPrimary.VAR7,
     alignSelf: "center",
     paddingHorizontal: 10,
     paddingVertical: 4,

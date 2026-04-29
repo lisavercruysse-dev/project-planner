@@ -43,7 +43,7 @@ export default function Feature({feature}: Props) {
               </Text>
             </Pressable>
             <Pressable onPress={() => setExpanded(!expanded)}>
-              <AntDesign name={expanded ? "caret-up" : "caret-down" } size={24} color={hasTasks ? ColorsPrimary.VAR9 : "grey" } />
+              <AntDesign name={expanded ? "caret-up" : "caret-down" } size={24} color={hasTasks ? ColorsPrimary.VAR7 : "grey" } />
             </Pressable>
           </View>
         </View>
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
       paddingVertical: 3,
       justifyContent: "center",
       borderRadius: 15,
-      backgroundColor: ColorsPrimary.VAR9
+      backgroundColor: ColorsPrimary.VAR7
     },
     buttonText: {
       color: ColorsPrimary.VAR1,

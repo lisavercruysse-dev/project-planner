@@ -35,8 +35,8 @@ const styles = StyleSheet.create({
     borderBlockColor: ColorsPrimary.VAR9
   },
   buttonSelected: {
-    width: 18,
-    height: 18,
+    width: 12,
+    height: 12,
     borderRadius: 9,
   }
 })

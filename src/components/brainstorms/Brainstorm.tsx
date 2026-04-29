@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 15,
     alignSelf: "center",
-    backgroundColor: ColorsPrimary.VAR9
+    backgroundColor: ColorsPrimary.VAR7
   },
   buttonText: {
       color: ColorsPrimary.VAR1,

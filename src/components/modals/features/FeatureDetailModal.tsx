@@ -1,8 +1,9 @@
+import { getFeatureById } from "@/src/api/features";
 import { ColorsPrimary } from "@/src/themes/Colors";
 import { FontFamily } from "@/src/themes/Fonts";
 import { FeatureType } from "@/src/types/FeatureType";
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import AddTaskModal from "./AddTaskModal";
 
@@ -12,13 +13,38 @@ type Props = {
 
 export default function FeatureDetailModal({feature}: Props) {
   const [addTaskModalVisible, setAddTaskModalVisible] = useState(false);
+  const [fullFeature, setFullFeature] = useState<FeatureType | null>(null);
+
+    useEffect(() => {
+    const fetch = async () => {
+      const data = await getFeatureById(feature.id);
+      setFullFeature(data);
+    };
+    fetch();
+  }, [feature.id]);
 
   return (
-    <View>
+    <View style={styles.container}>
       <View style={styles.titleContainer}>
         <Ionicons name="extension-puzzle" size={20} color={ColorsPrimary.VAR9} />
         <Text style={styles.title}>
-          {feature.name}
+          {fullFeature?.name}
+        </Text>
+      </View>
+      <View style={styles.sectionContainer}>
+        <Text style={styles.subTitle}>
+          Project
+        </Text>
+        <Text style={styles.info}>
+          {fullFeature?.project?.name}
+        </Text>
+      </View>
+      <View style={styles.sectionContainer}>
+        <Text style={styles.subTitle}>
+          Description
+        </Text>
+        <Text style={styles.info}>
+          {fullFeature?.description}
         </Text>
       </View>
       <Pressable style={styles.button} onPress={() => setAddTaskModalVisible(true)}>
@@ -85,5 +111,24 @@ const styles = StyleSheet.create({
     width: '100%',
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0
+  },
+
+  sectionContainer: {
+    flexDirection: "column",
+    gap: 5
+  },
+  subTitle: {
+    color: ColorsPrimary.VAR9,
+    fontSize: 15,
+    fontFamily: FontFamily.BOLD
+  },
+  info: {
+    color: ColorsPrimary.VAR9,
+    fontFamily: FontFamily.REGULAR
+  },
+  container: {
+    flexDirection: 'column',
+    gap: 30,
+    padding: 10,
   }
 })

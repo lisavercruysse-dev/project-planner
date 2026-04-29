@@ -1,44 +1,47 @@
-import { createFeature } from "@/src/api/features";
+import { createProject } from "@/src/api/projects";
 import { ColorsPrimary } from "@/src/themes/Colors";
 import { FontFamily } from "@/src/themes/Fonts";
-import { FeatureType } from "@/src/types/FeatureType";
 import { ProjectType } from "@/src/types/ProjectType";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import RadioButtonList from "../../radioButton/RadioButtonList";
 
 type Props = {
-  project: ProjectType;
-  onCreate: (feature: FeatureType) => void
+  onClose: () => void,
+  onProjectAdded: (newProject: ProjectType) => void,
 }
 
-export default function AddFeatureModal ({project, onCreate}: Props) {
+export default function AddProjectModal({onClose, onProjectAdded}: Props) {
   const [name, onChangeName] = useState('');
   const [description, onChangeDescription] = useState('');
+  const [selectedTypeIndex, setSelectedTypeIndex] = useState<number | null>(null);
+  const [typeError, setTypeError] = useState(false);
 
-  const handleAddFeature = async() => {
-    const feature = await createFeature({
-      name: name === '' ? 'untitled' : name,
+  const projectTypes = ["software dev", "game dev"];
+
+  const handleAddProject = async() => {
+    if (selectedTypeIndex === null) {
+      setTypeError(true)
+      return;
+    }
+
+    const newProject = await createProject({
+      name,
       description,
-      project: project.id
+      type: projectTypes[selectedTypeIndex]
     })
-    onCreate(feature)
+    onClose();
+    onProjectAdded(newProject);
   }
+  
 
   return (
     <View style={styles.container}>
       <View style={styles.titleContainer}>
-        <Ionicons name="extension-puzzle" size={20} color={ColorsPrimary.VAR9} />
+        <Ionicons name="file-tray" size={20} color={ColorsPrimary.VAR9} />
         <Text style={styles.title}>
-          Add Feature
-        </Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.subTitle}>
-          Project
-        </Text>
-        <Text style={styles.info}>
-          {project.name}
+          Add Project
         </Text>
       </View>
       <View style={styles.section}>
@@ -58,12 +61,22 @@ export default function AddFeatureModal ({project, onCreate}: Props) {
         <TextInput 
           style={styles.input}
           placeholder="description"
-          multiline
-          numberOfLines={5}
           onChangeText={onChangeDescription}
+          multiline
         />
       </View>
-      <Pressable onPress={() => handleAddFeature()} style={styles.button}>
+      <View style={styles.section}>
+        <Text style={styles.subTitle}>
+          Type
+        </Text>
+        <RadioButtonList listItems={projectTypes} selectedIndex={selectedTypeIndex} onSelect={(index) => setSelectedTypeIndex(index)}/>
+        {typeError && (
+          <Text style={styles.error}>
+            Type is mandatory
+          </Text>
+        )}
+      </View>
+      <Pressable onPress={() => handleAddProject()} style={styles.button}>
         <Text style={styles.buttonText}>
           create
         </Text>
@@ -88,21 +101,16 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.BOLD,
     color: ColorsPrimary.VAR9
   },
+  section: {
+    flexDirection: 'column',
+    gap: 5
+  },
   subTitle: {
     fontSize: 15,
     fontFamily: FontFamily.BOLD,
     color: ColorsPrimary.VAR9
   },
-  info: {
-    fontSize: 14,
-    fontFamily: FontFamily.REGULAR,
-    color: ColorsPrimary.VAR9
-  },
-  section: {
-    flexDirection: 'column',
-    gap: 5
-  },
-    input: {
+  input: {
     borderColor: ColorsPrimary.VAR9,
     borderWidth: 1,
     borderRadius: 15,
@@ -111,7 +119,7 @@ const styles = StyleSheet.create({
     fontFamily: FontFamily.REGULAR,
     color: ColorsPrimary.VAR9
   },
-  button: {
+    button: {
     backgroundColor: ColorsPrimary.VAR7,
     paddingHorizontal: 12,
     paddingVertical: 8, 
@@ -124,4 +132,8 @@ const styles = StyleSheet.create({
     color: ColorsPrimary.VAR1,
     fontFamily: FontFamily.BOLD
   },
+  error: {
+    fontFamily: FontFamily.REGULAR,
+    color: 'red'
+  }
 })

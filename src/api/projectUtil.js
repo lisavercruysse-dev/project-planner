@@ -4,7 +4,9 @@ export const mapData = (snapshot) => {
     return {
       id: doc.id,
       name: data.name,
-      description: data.description
+      description: data.description,
+      type: data.type,
+      status: data.status,
     }
   })
 }
@@ -13,4 +15,6 @@ export const mapSingleData = (id, data) => ({
   id,
   name: data.name,
   description: data.description,
+  type: data.type,
+  status: data.status,
 });

@@ -8,7 +8,6 @@ import { FontFamily } from "../../themes/Fonts";
 import { TaskType } from "../../types/TaskType";
 import TaskDetailModal from '../modals/tasks/TaskDetailsModal';
 
-
 type Props = {
   task: TaskType;
   level?: number;
@@ -53,13 +52,13 @@ return (
             onPress={() => setDetailsVisible(!detailsVisible)}
             style={[
               styles.button,
-              { backgroundColor: taskData.status === "completed" ? "#78C72C" : taskData.status === "in progress" ? "#F0CB24" : ColorsPrimary.VAR9}
+              { backgroundColor: taskData.status === "completed" ? "#78C72C" : taskData.status === "in progress" ? "#F0CB24" : ColorsPrimary.VAR7}
             ]}
           >
             <Text style={styles.buttonText}>View</Text>
           </Pressable>
           <Pressable disabled={!hasKids} onPress={handleExpandTask}>
-            <AntDesign name={expanded ? "caret-up" : "caret-down"} size={24} color={hasKids ? ColorsPrimary.VAR9 : "grey"} />
+            <AntDesign name={expanded ? "caret-up" : "caret-down"} size={24} color={hasKids ? ColorsPrimary.VAR7 : "grey"} />
           </Pressable>
         </View>
       </View>

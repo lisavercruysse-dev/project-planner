@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   },
 
   completeButton: {
-    backgroundColor: ColorsPrimary.VAR9,
+    backgroundColor: ColorsPrimary.VAR7,
     paddingHorizontal: 12,
     paddingVertical: 8, 
     borderRadius: 15,

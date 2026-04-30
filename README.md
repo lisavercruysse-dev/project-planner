@@ -26,22 +26,22 @@ npx expo start
 ## Features
 
 * Quickly manage daily tasks
-- Add spent time
-- Mark as completed
-- Mark as uncomplete
+  - Add spent time
+  - Mark as completed
+  - Mark as uncomplete
 
 * Manage projects
-- Add new projects
-- Brainstorm
-- Tag projects by type
+  - Add new projects
+  - Brainstorm
+  - Tag projects by type
 
 * Manage features
-- Add new features
-- Add tasks to features
-- Edit features
+  - Add new features
+  - Add tasks to features
+  - Edit features
 
 * Manage tasks
-- Add new tasks
-- Add subtasks (as deep as you want)
-- Edit tasks
-- Plan tasks
+  - Add new tasks
+  - Add subtasks (as deep as you want)
+  - Edit tasks
+  - Plan tasks

@@ -15,6 +15,7 @@ The core of the planner is the ability to break a project down into features, an
 ## Instructions
 
 To start up the project:  
+* Have the expo go app installed then run the following command. In the app you can scan the QR code to connect to the app.
 ```
 npx expo start
 ```
@@ -22,3 +23,4 @@ npx expo start
 ## Features
 
 * Quickly manage daily tasks
+* 

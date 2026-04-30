@@ -2,7 +2,7 @@
 
 A mobile project planner application built to learn React Native (using Expo).
 
-_note: this is a W.I.P._
+_note: this is a W.I.P._  
 _New features and improvements are still going to be added_
 
 ## Why I built this

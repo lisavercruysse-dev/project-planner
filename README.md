@@ -2,8 +2,7 @@
 
 A mobile project planner application built to learn React Native (using Expo).
 
-_note: this is a W.I.P._  
-_New features and improvements are still going to be added_
+_This project is not fully finished as throughout development I realised my idea is better developed as a desktop application / website._  
 
 ## Why I built this
 
@@ -33,7 +32,7 @@ npx expo start
 * Quickly manage daily tasks
   - Add spent time
   - Mark as completed
-  - Mark as uncomplete
+  - Mark as uncompleted
 
 * Manage projects
   - Add new projects
